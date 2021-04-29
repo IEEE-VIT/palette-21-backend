@@ -6,8 +6,8 @@
   "author": "r-ush <aarush.bhatt@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "start": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/database/db.ts",
     "lint": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
   },
   "devDependencies": {
@@ -29,6 +29,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.12.7"
   }
 }
