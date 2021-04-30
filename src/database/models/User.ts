@@ -28,7 +28,6 @@ const schema = new Schema(
     userID: {
       type: Schema.Types.String,
       required: true,
-      primary: true
     },
     userImg: Schema.Types.String,
     name: {

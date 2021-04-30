@@ -1,23 +1,25 @@
 import { Schema, model, Document } from 'mongoose';
-import User from './User';
+import Team from './Team';
 
 export const DOCUMENT_NAME = 'Team';
 export const COLLECTION_NAME = 'teams';
 
-export default interface Team extends Document {
-  teamCode: string;
-  users: [];
-  invited: [];
-  name: string;
-  problemStatement: string;
-  tries: number;
+export default interface Submission extends Document {
+  type: string,
+  team: Team,
+  title: string,
+  description: string,
+  tracks: [],
+  videoLink: string,
+  images: []
 }
 
 const schema = new Schema(
   {
-    teamCode: {
-      type: Schema.Types.String,
-      required: true
+    submissionID: Schema.Types.String,
+    team: {
+      type: Schema.Types.ObjectId,
+      ref: 'Team'
     },
     name: {
       type: Schema.Types.String,
