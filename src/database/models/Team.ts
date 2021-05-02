@@ -5,7 +5,7 @@ export const DOCUMENT_NAME = 'Team';
 export const COLLECTION_NAME = 'teams';
 
 export default interface Team extends Document {
-  teamCode: string;
+  _id: number;
   users: [User];
   invited: [User];
   name: string;

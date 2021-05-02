@@ -22,4 +22,4 @@ const schema = new Schema(
   }
 );
 
-export const teamModel = model<Deadline>(DOCUMENT_NAME, schema, COLLECTION_NAME);
+export const deadlineModel = model<Deadline>(DOCUMENT_NAME, schema, COLLECTION_NAME);

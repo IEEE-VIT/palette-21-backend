@@ -38,4 +38,4 @@ const schema = new Schema(
   }
 );
 
-export const teamModel = model<Submission>(DOCUMENT_NAME, schema, COLLECTION_NAME);
+export const submsissionModel = model<Submission>(DOCUMENT_NAME, schema, COLLECTION_NAME);

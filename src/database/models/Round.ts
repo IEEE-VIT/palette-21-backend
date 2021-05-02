@@ -30,4 +30,4 @@ const schema = new Schema(
   }
 );
 
-export const teamModel = model<Round>(DOCUMENT_NAME, schema, COLLECTION_NAME);
+export const roundModel = model<Round>(DOCUMENT_NAME, schema, COLLECTION_NAME);
