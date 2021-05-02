@@ -6,8 +6,8 @@ export const COLLECTION_NAME = 'teams';
 
 export default interface Team extends Document {
   teamCode: string;
-  users: [];
-  invited: [];
+  users: [User];
+  invited: [User];
   name: string;
   problemStatement: string;
   tries: number;

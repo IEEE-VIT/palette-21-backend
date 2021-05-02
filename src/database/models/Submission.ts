@@ -1,8 +1,8 @@
 import { Schema, model, Document } from 'mongoose';
 import Team from './Team';
 
-export const DOCUMENT_NAME = 'Team';
-export const COLLECTION_NAME = 'teams';
+export const DOCUMENT_NAME = 'Submission';
+export const COLLECTION_NAME = 'submissions';
 
 export default interface Submission extends Document {
   type: string,
@@ -38,4 +38,4 @@ const schema = new Schema(
   }
 );
 
-export const teamModel = model<Team>(DOCUMENT_NAME, schema, COLLECTION_NAME);
+export const teamModel = model<Submission>(DOCUMENT_NAME, schema, COLLECTION_NAME);
