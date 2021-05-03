@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import passport from "passport";
 import dotenv from "dotenv";
+// import bodyParser from "body-parser";
 import connect from "./database/db";
 
 import router from "./routes/index";
