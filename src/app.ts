@@ -3,7 +3,7 @@ import passport from "passport";
 import dotenv from "dotenv";
 import connect from "./database/db";
 
-import userRouter from "./routes/index";
+import router from "./routes/index";
 
 dotenv.config();
 
@@ -26,6 +26,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send("hello");
 });
 
-app.use("/user", userRouter);
+app.use("/v1", router);
 
 export default app;

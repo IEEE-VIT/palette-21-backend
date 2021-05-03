@@ -1,32 +1,8 @@
 import { Router } from "express";
+import userRouter from "./user/user";
 
-import passport from "passport";
-// import schemas from "../middleware/schemas";
-// import validator from "../middleware/validation";
+const router = Router();
 
-const userRouter = Router();
+router.use("/user", userRouter);
 
-userRouter.get("/okgoogle", (req, res) => {
-  res.send("ok google");
-});
-
-userRouter.get("/notgoogle", (req, res) => {
-  res.send("not ok google");
-});
-
-userRouter.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
-);
-
-userRouter.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/user/notgoogle" }),
-  (req, res) => {
-    res.redirect("/user/okgoogle");
-  }
-);
-
-export default userRouter;
+export default router;
