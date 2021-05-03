@@ -14,6 +14,7 @@ process.on("uncaughtException", (e) => {
 });
 
 const app: Application = express();
+const port: number = 3000 || process.env.PORT;
 
 app.use(express.json());
 app.use(passport.initialize());
@@ -27,5 +28,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/v1", router);
+
+app.listen(port, () => {
+  console.log("Server running on " + port);
+});
 
 export default app;
