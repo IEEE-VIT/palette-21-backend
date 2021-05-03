@@ -5,12 +5,10 @@ export const DOCUMENT_NAME = "User";
 export const COLLECTION_NAME = "users";
 
 export default interface User extends Document {
-  userID: string;
   userImg: string;
   name: string;
   email: string;
   firstLogin: boolean;
-  password: string;
   skills: [];
   tools: [];
   team: Team;
@@ -24,21 +22,13 @@ const schema = new Schema({
     required: true,
     ref: "Team",
   },
-  userID: {
-    type: Schema.Types.String,
-    required: true,
-  },
   userImg: Schema.Types.String,
   name: {
-    type: Schema.Types.Boolean,
+    type: Schema.Types.String,
     default: true,
   },
   email: {
     type: Schema.Types.String,
-    required: true,
-  },
-  password: {
-    type: Schema.Types.Boolean,
     required: true,
   },
   firstLogin: Schema.Types.Boolean,
