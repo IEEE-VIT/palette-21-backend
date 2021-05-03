@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/database/db.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
     "lint": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
   },
   "devDependencies": {

@@ -1,12 +1,13 @@
-import bodyParser from "body-parser";
 import express, { Application, Request, Response } from "express";
 import passport from "passport";
 import dotenv from "dotenv";
+import connect from "./database/db";
+
 import userRouter from "./routes/index";
 
 dotenv.config();
 
-require("./auth/google.auth");
+require("./controllers/auth/google.auth");
 
 process.on("uncaughtException", (e) => {
   console.log(e);
@@ -14,14 +15,11 @@ process.on("uncaughtException", (e) => {
 
 const app: Application = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
 app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(cors({ optionsSuccessStatus: 200 }));
-// app.use(morgan("tiny"));
+connect();
 
 app.get("/", (req: Request, res: Response) => {
   console.log("Hello Palette");

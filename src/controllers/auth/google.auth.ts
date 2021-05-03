@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/ban-types */
+
 import passport from "passport";
 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
