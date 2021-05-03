@@ -6,8 +6,8 @@
   "author": "r-ush <aarush.bhatt@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "start": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/database/db.ts",
     "lint": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
   },
   "devDependencies": {
@@ -34,6 +34,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "passport": "^0.4.1",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "mongoose": "^5.12.7"
   }
 }
