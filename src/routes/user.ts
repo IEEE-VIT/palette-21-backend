@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import passport from "passport";
-import UserController from "../../controllers/user.controller";
+import UserController from "../controllers/user.controller";
 // import figmaAuthController from "../../controllers/user.controller";
 
 const userRouter = Router();

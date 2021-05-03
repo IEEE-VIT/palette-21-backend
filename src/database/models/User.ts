@@ -19,7 +19,7 @@ export default interface User extends Document {
 const schema = new Schema({
   team: {
     type: Schema.Types.ObjectId,
-    required: true,
+    // required: true,
     ref: "Team",
   },
   userImg: Schema.Types.String,

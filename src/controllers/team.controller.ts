@@ -37,7 +37,7 @@ export const addTeam = (req: Request, res: Response) => {
 };
 
 export const updateTeam = (req: Request, res: Response) => {
-  let team = TeamModel.findByIdAndUpdate(
+  const team = TeamModel.findByIdAndUpdate(
     { teamCode: req.params.code },
     req.body,
     (err: any, team: any) => {
