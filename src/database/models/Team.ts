@@ -5,7 +5,7 @@ export const DOCUMENT_NAME = "Team";
 export const COLLECTION_NAME = "teams";
 
 export default interface Team extends Document {
-  _id: number;
+  teamCode: string;
   users: [User];
   invited: [User];
   name: string;
@@ -38,4 +38,4 @@ const schema = new Schema({
   tries: Schema.Types.Number,
 });
 
-export const teamModel = model<Team>(DOCUMENT_NAME, schema, COLLECTION_NAME);
+export const TeamModel = model<Team>(DOCUMENT_NAME, schema, COLLECTION_NAME);

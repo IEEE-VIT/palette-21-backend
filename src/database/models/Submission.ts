@@ -15,7 +15,6 @@ export default interface Submission extends Document {
 }
 
 const schema = new Schema({
-  submissionID: Schema.Types.String,
   team: {
     type: Schema.Types.ObjectId,
     ref: "Team",
