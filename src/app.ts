@@ -36,7 +36,7 @@ app.use("/v1", userAuthMiddleware, router);
 app.use("/user", userRouter);
 
 app.listen(port, () => {
-  console.log("Server running on " + port);
+  console.log(`Server running on ${port}`);
 });
 
 export default app;
