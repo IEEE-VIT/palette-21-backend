@@ -25,7 +25,7 @@ userRouter.get(
   userController.googleAuthController
 );
 
-// figma auth
+// figma auth routes
 
 userRouter.post("/auth/figma", userController.figmaAuthController);
 
