@@ -12,7 +12,7 @@ export const allTeams = (req: Request, res: Response) => {
 };
 
 export const fetchTeam = (req: Request, res: Response) => {
-  const team = TeamModel.find(
+  const team = TeamModel.findOne(
     { teamCode: req.params.code },
     (err: any, team: any) => {
       if (err) {
@@ -21,7 +21,7 @@ export const fetchTeam = (req: Request, res: Response) => {
         res.send(team);
       }
     }
-  ).populate("users").exec;
+  ).populate("users");
 };
 
 export const addTeam = (req: Request, res: Response) => {
@@ -37,9 +37,10 @@ export const addTeam = (req: Request, res: Response) => {
 };
 
 export const updateTeam = (req: Request, res: Response) => {
-  const team = TeamModel.findByIdAndUpdate(
+  const team = TeamModel.findOneAndUpdate(
     { teamCode: req.params.code },
     req.body,
+    null,
     (err: any, team: any) => {
       if (err) {
         res.send(err);

@@ -9,18 +9,20 @@ export default interface Team extends Document {
   users: [User];
   invited: [User];
   name: string;
-  problemStatement: string;
+  problemStatement: [];
   tries: number;
 }
 
 const schema = new Schema({
   teamCode: {
     type: Schema.Types.String,
-    required: true,
+    index: true,
+    unique: true,
   },
   name: {
     type: Schema.Types.String,
-    default: true,
+    required: true,
+    unique: true,
   },
   users: [
     {
@@ -34,7 +36,7 @@ const schema = new Schema({
       ref: "User",
     },
   ],
-  problemStatement: Schema.Types.String,
+  problemStatement: Schema.Types.Array,
   tries: Schema.Types.Number,
 });
 

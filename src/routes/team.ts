@@ -8,9 +8,10 @@ import {
 } from "../controllers/team.controller";
 
 const teamRouter = Router();
-
 teamRouter.get("/allTeams", allTeams);
-teamRouter.get("/team/:code", fetchTeam);
+teamRouter.get("/:code", fetchTeam);
 teamRouter.post("/createTeam", addTeam);
 teamRouter.delete("/deleteTeam/:code", deleteTeam);
 teamRouter.put("/updateTeam/:code", updateTeam);
+
+export default teamRouter;
