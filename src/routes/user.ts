@@ -1,12 +1,12 @@
 import { Router } from "express";
 
 import passport from "passport";
+import UserController from "../controllers/user.controller";
 
 const userRouter = Router();
+const userController = new UserController();
 
-userRouter.get("/okgoogle", (req, res) => {
-  res.send("ok google");
-});
+// google auth
 
 userRouter.get("/notgoogle", (req, res) => {
   res.send("not ok google");
@@ -22,9 +22,11 @@ userRouter.get(
 userRouter.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/user/notgoogle" }),
-  (req, res) => {
-    res.redirect("/user/okgoogle");
-  }
+  userController.googleAuthController
 );
+
+// figma auth
+
+userRouter.post("/auth/figma", userController.figmaAuthController);
 
 export default userRouter;
