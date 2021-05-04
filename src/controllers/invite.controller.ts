@@ -1,39 +1,34 @@
 import { Request, Response } from "express";
 import { InviteModel } from "../database/models/Invite";
 
-export const myInvites = (req: Request, res: Response) => {
-  const invites = InviteModel.find(
-    { recipient: req.params.userId },
-    (err: any, invites: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(invites);
-      }
+class InviteController {
+  myInvites = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const invites = await InviteModel.find({ recipient: req.params.userId });
+      res.send(invites);
+    } catch (error) {
+      console.error(error);
     }
-  );
-};
+  };
 
-export const addInvite = (req: Request, res: Response) => {
-  const invite = new InviteModel(req.body);
-  invite.save((err: any) => {
-    if (err) {
-      res.send(err);
-    } else {
+  addInvite = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const invite = await new InviteModel(req.body);
+      invite.save();
       res.send("Invite sent");
+    } catch (error) {
+      console.error(error);
     }
-  });
-};
+  };
 
-export const sentInvites = (req: Request, res: Response) => {
-  const invites = InviteModel.find(
-    { teamCode: req.params.userId },
-    (err: any, invites: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(invites);
-      }
+  sentInvites = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const invites = await InviteModel.find({ teamCode: req.params.code });
+      res.send(invites);
+    } catch (error) {
+      console.error(error);
     }
-  );
-};
+  };
+}
+
+export default InviteController;

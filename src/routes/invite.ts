@@ -1,14 +1,12 @@
 import { Router } from "express";
-import {
-  myInvites,
-  addInvite,
-  sentInvites,
-} from "../controllers/invite.controller";
+import InviteController from "../controllers/invite.controller";
+
+const inviteController = new InviteController();
 
 const inviteRouter = Router();
 
-inviteRouter.post("/add", addInvite);
-inviteRouter.get("/:userID", myInvites);
-inviteRouter.get("/sent/:teamCode", sentInvites);
+inviteRouter.post("/add", inviteController.addInvite);
+inviteRouter.get("/:userID", inviteController.myInvites);
+inviteRouter.get("/sent/:teamCode", inviteController.sentInvites);
 
 export default inviteRouter;

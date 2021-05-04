@@ -6,8 +6,8 @@ export const COLLECTION_NAME = "teams";
 
 export default interface Team extends Document {
   teamCode: string;
-  users: [User];
-  invited: [User];
+  users: [];
+  invited: [];
   name: string;
   problemStatement: [];
   tries: number;
@@ -17,11 +17,6 @@ const schema = new Schema({
   teamCode: {
     type: Schema.Types.String,
     index: true,
-    unique: true,
-  },
-  name: {
-    type: Schema.Types.String,
-    required: true,
     unique: true,
   },
   users: [
@@ -36,6 +31,11 @@ const schema = new Schema({
       ref: "User",
     },
   ],
+  name: {
+    type: Schema.Types.String,
+    required: true,
+    unique: true,
+  },
   problemStatement: Schema.Types.Array,
   tries: Schema.Types.Number,
 });

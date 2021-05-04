@@ -5,6 +5,8 @@ import connect from "./database/db";
 
 import router from "./routes/index";
 import userRouter from "./routes/user";
+import inviteRouter from "./routes/invite";
+import teamRouter from "./routes/team";
 
 dotenv.config();
 
@@ -34,6 +36,8 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/v1", userAuthMiddleware, router);
 app.use("/user", userRouter);
+app.use("/team", teamRouter);
+app.use;
 
 app.listen(port, () => {
   console.log(`Server running on ${port}`);

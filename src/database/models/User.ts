@@ -1,5 +1,4 @@
 import { Schema, model, Document } from "mongoose";
-import Team from "./Team";
 
 export const DOCUMENT_NAME = "User";
 export const COLLECTION_NAME = "users";
@@ -11,17 +10,13 @@ export default interface User extends Document {
   firstLogin: boolean;
   skills: [];
   tools: [];
-  team: Team;
+  teamCode: string;
   needTeam: boolean;
   token: string;
+  invites: [];
 }
 
 const schema = new Schema({
-  team: {
-    type: Schema.Types.ObjectId,
-    // required: true,
-    ref: "Team",
-  },
   userImg: Schema.Types.String,
   name: {
     type: Schema.Types.String,
@@ -32,10 +27,15 @@ const schema = new Schema({
     required: true,
   },
   firstLogin: Schema.Types.Boolean,
-  skills: [Schema.Types.String],
-  tools: [Schema.Types.String],
+  skills: Schema.Types.Array,
+  tools: Schema.Types.Array,
+  teamCode: Schema.Types.String,
   needTeam: Schema.Types.Boolean,
   token: Schema.Types.String,
+  invites: {
+    type: Schema.Types.ObjectId,
+    ref: "Invite",
+  },
 });
 
 export const userModel = model<User>(DOCUMENT_NAME, schema, COLLECTION_NAME);

@@ -1,65 +1,56 @@
 import { Request, Response } from "express";
 import { TeamModel } from "../database/models/Team";
 
-export const allTeams = (req: Request, res: Response) => {
-  const teams = TeamModel.find((err: any, teams: any) => {
-    if (err) {
-      res.send(err);
-    } else {
+class TeamController {
+  allTeams = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const teams = await TeamModel.find();
       res.send(teams);
+    } catch (error) {
+      console.error(error);
     }
-  });
-};
+  };
 
-export const fetchTeam = (req: Request, res: Response) => {
-  const team = TeamModel.findOne(
-    { teamCode: req.params.code },
-    (err: any, team: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(team);
-      }
+  fetchTeam = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const team = await TeamModel.findOne({ teamCode: req.params.code });
+      res.send(team);
+    } catch (error) {
+      console.error(error);
     }
-  ).populate("users");
-};
+  };
 
-export const addTeam = (req: Request, res: Response) => {
-  const team = new TeamModel(req.body);
-  team.teamCode = Math.floor(Math.random() * 1000000 + 1).toString();
-  team.save((err: any) => {
-    if (err) {
-      res.send(err);
-    } else {
+  addTeam = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const team = await new TeamModel(req.body);
+      team.teamCode = Math.floor(Math.random() * 1000000 + 1).toString();
+      team.save();
       res.send("Team added");
+    } catch (error) {
+      console.log(error);
     }
-  });
-};
+  };
 
-export const updateTeam = (req: Request, res: Response) => {
-  const team = TeamModel.findOneAndUpdate(
-    { teamCode: req.params.code },
-    req.body,
-    null,
-    (err: any, team: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(team);
-      }
+  updateTeam = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const team = await TeamModel.findOneAndUpdate(
+        { teamCode: req.params.code },
+        req.body
+      );
+      res.send(team);
+    } catch (error) {
+      console.log(error);
     }
-  );
-};
+  };
 
-export const deleteTeam = (req: Request, res: Response) => {
-  const team = TeamModel.deleteOne(
-    { teamCode: req.params.code },
-    (err: any) => {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send("Team Deleted");
-      }
+  deleteTeam = async (req: Request, res: Response): Promise<void> => {
+    try {
+      await TeamModel.deleteOne({ teamCode: req.params.code });
+      res.send("Team deleted");
+    } catch (error) {
+      console.error(error);
     }
-  );
-};
+  };
+}
+
+export default TeamController;

@@ -1,6 +1,4 @@
 import { Schema, model, Document } from "mongoose";
-import Team from "./Team";
-import User from "./User";
 
 export const DOCUMENT_NAME = "Invite";
 export const COLLECTION_NAME = "invites";
@@ -17,7 +15,8 @@ const schema = new Schema({
     required: "True",
   },
   recipient: {
-    type: Schema.Types.String,
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: "True",
   },
   status: {
