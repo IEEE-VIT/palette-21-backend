@@ -21,7 +21,7 @@ export const fetchTeam = (req: Request, res: Response) => {
         res.send(team);
       }
     }
-  );
+  ).populate("users");
 };
 
 export const addTeam = (req: Request, res: Response) => {
