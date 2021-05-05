@@ -1,5 +1,4 @@
 import { Schema, model, Document } from "mongoose";
-import User from "./User";
 
 export const DOCUMENT_NAME = "Team";
 export const COLLECTION_NAME = "teams";

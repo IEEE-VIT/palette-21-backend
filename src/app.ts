@@ -5,8 +5,6 @@ import connect from "./database/db";
 
 import router from "./routes/index";
 import userRouter from "./routes/user";
-import inviteRouter from "./routes/invite";
-import teamRouter from "./routes/team";
 
 dotenv.config();
 
@@ -18,7 +16,6 @@ process.on("uncaughtException", (e) => {
 });
 
 const app: Application = express();
-const port: number = 3000 || process.env.PORT;
 
 app.use(express.json());
 app.use(passport.initialize());
@@ -36,11 +33,5 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/v1", userAuthMiddleware, router);
 app.use("/user", userRouter);
-app.use("/team", teamRouter);
-app.use("/invite", inviteRouter);
-
-app.listen(port, () => {
-  console.log(`Server running on ${port}`);
-});
 
 export default app;

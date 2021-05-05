@@ -13,7 +13,7 @@ interface IUser {
   token: string;
 }
 
-const figmaAuth = (code: string, redirectUri: string) =>
+const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
   new Promise<IUser>((resolve, reject) => {
     let user: IUser;
     axios
