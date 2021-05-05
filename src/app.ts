@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import connect from "./database/db";
 
 import router from "./routes/index";
-import userRouter from "./routes/user";
+import authRouter from "./routes/auth";
 
 dotenv.config();
 
@@ -31,7 +31,11 @@ app.get("/", (req: Request, res: Response) => {
   res.send("hello");
 });
 
+app.get("/saferoute", userAuthMiddleware, (req: Request, res: Response) => {
+  res.send("authorized");
+});
+
 app.use("/v1", userAuthMiddleware, router);
-app.use("/user", userRouter);
+app.use("/auth", authRouter);
 
 export default app;

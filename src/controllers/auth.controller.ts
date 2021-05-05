@@ -4,7 +4,7 @@ import { userModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
 import figmaAuth from "./auth/figma.auth";
 
-class UserController {
+class AuthController {
   figmaAuthController = async (req: Request, res: Response): Promise<void> => {
     try {
       console.log("figmaloginctrl");
@@ -72,4 +72,4 @@ class UserController {
   };
 }
 
-export default UserController;
+export default AuthController;

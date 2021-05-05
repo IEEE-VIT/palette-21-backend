@@ -42,7 +42,7 @@ passport.use(
     {
       clientID: process.env.client_id,
       clientSecret: process.env.client_secret,
-      callbackURL: "/user/auth/google/callback",
+      callbackURL: "/auth/google/callback",
     },
     async (
       accessToken: string,
