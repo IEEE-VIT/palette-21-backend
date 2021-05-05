@@ -24,21 +24,13 @@ const schema = new Schema({
     required: true,
     ref: "Team",
   },
-  userID: {
-    type: Schema.Types.String,
-    required: true,
-  },
   userImg: Schema.Types.String,
   name: {
-    type: Schema.Types.Boolean,
+    type: Schema.Types.String,
     default: true,
   },
   email: {
     type: Schema.Types.String,
-    required: true,
-  },
-  password: {
-    type: Schema.Types.Boolean,
     required: true,
   },
   firstLogin: Schema.Types.Boolean,
