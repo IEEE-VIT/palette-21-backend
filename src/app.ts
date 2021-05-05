@@ -37,7 +37,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/v1", userAuthMiddleware, router);
 app.use("/user", userRouter);
 app.use("/team", teamRouter);
-app.use;
+app.use("/invite", inviteRouter);
 
 app.listen(port, () => {
   console.log(`Server running on ${port}`);

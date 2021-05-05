@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { InviteModel } from "../database/models/Invite";
+import { TeamModel } from "../database/models/Team";
 
 class InviteController {
   myInvites = async (req: Request, res: Response): Promise<void> => {
@@ -25,6 +26,21 @@ class InviteController {
     try {
       const invites = await InviteModel.find({ teamCode: req.params.code });
       res.send(invites);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  acceptInvite = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { code } = req.params;
+      const updatedTeam = await TeamModel.findOneAndUpdate(
+        { teamCode: code },
+        {
+          $push: { users: req.body.userId },
+        }
+      );
+      res.send(updatedTeam);
     } catch (error) {
       console.error(error);
     }
