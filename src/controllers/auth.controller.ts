@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
+import { Types } from "mongoose";
 import { userModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
 import figmaAuth from "./auth/figma.auth";
@@ -15,7 +15,7 @@ class AuthController {
       const { name, imgUrl, email } = user;
 
       const record = await userModel.findOne({ email });
-      let id: mongoose.Types.ObjectId;
+      let id: Types.ObjectId;
       if (record) {
         const { _id } = record;
         id = _id;
@@ -45,7 +45,7 @@ class AuthController {
     try {
       const { email, name, imgUrl } = req.user;
       const record = await userModel.findOne({ email });
-      let id: mongoose.Types.ObjectId;
+      let id: Types.ObjectId;
       if (record) {
         const { _id } = record;
         id = _id;
