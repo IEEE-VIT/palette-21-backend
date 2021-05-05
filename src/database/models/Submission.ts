@@ -5,7 +5,6 @@ export const DOCUMENT_NAME = "Submission";
 export const COLLECTION_NAME = "submissions";
 
 export default interface Submission extends Document {
-  type: string;
   team: Team;
   title: string;
   description: string;
@@ -15,29 +14,15 @@ export default interface Submission extends Document {
 }
 
 const schema = new Schema({
-  submissionID: Schema.Types.String,
   team: {
     type: Schema.Types.ObjectId,
     ref: "Team",
   },
-  name: {
-    type: Schema.Types.String,
-    default: true,
-  },
-  users: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  invited: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  problemStatement: Schema.Types.String,
-  tries: Schema.Types.Number,
+  title: Schema.Types.String,
+  description: Schema.Types.String,
+  tracks: Schema.Types.Array,
+  videoLink: Schema.Types.String,
+  images: Schema.Types.Array,
 });
 
 export const submsissionModel = model<Submission>(

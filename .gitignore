@@ -119,3 +119,5 @@ dist
 .pnp.*
 
 yarn.lock
+src/scripts
+package-lock.json

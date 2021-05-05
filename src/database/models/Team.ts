@@ -1,26 +1,22 @@
 import { Schema, model, Document } from "mongoose";
-import User from "./User";
 
 export const DOCUMENT_NAME = "Team";
 export const COLLECTION_NAME = "teams";
 
 export default interface Team extends Document {
-  _id: number;
-  users: [User];
-  invited: [User];
+  teamCode: string;
+  users: [];
+  invited: [];
   name: string;
-  problemStatement: string;
+  problemStatement: [];
   tries: number;
 }
 
 const schema = new Schema({
   teamCode: {
     type: Schema.Types.String,
-    required: true,
-  },
-  name: {
-    type: Schema.Types.String,
-    default: true,
+    index: true,
+    unique: true,
   },
   users: [
     {
@@ -34,8 +30,13 @@ const schema = new Schema({
       ref: "User",
     },
   ],
-  problemStatement: Schema.Types.String,
+  name: {
+    type: Schema.Types.String,
+    required: true,
+    unique: true,
+  },
+  problemStatement: Schema.Types.Array,
   tries: Schema.Types.Number,
 });
 
-export const teamModel = model<Team>(DOCUMENT_NAME, schema, COLLECTION_NAME);
+export const TeamModel = model<Team>(DOCUMENT_NAME, schema, COLLECTION_NAME);

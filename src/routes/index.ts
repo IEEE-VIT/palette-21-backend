@@ -1,9 +1,12 @@
 import { Router } from "express";
-import userRouter from "./user/user";
+import teamRouter from "./team";
+import inviteRouter from "./invite";
 import dashboardouter from "./dashboard";
 
 const router = Router();
 
-router.use("/user", userRouter);
+router.use("/team", teamRouter);
+router.use("/invites", inviteRouter);
 router.use("/dashboard", dashboardouter);
+
 export default router;
