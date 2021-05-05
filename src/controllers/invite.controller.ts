@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { InviteModel } from "../database/models/Invite";
 import { TeamModel } from "../database/models/Team";
+import { UserModel } from "../database/models/User";
 
 class InviteController {
   myInvites = async (req: Request, res: Response): Promise<void> => {
@@ -47,10 +48,28 @@ class InviteController {
           // eslint-disable-next-line no-underscore-dangle
           $push: { users: req.user._id },
         }
-      );
+      )
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await UserModel.findByIdAndUpdate(req.user._id, {
+            teamCode: code,
+          });
+        })
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await InviteModel.deleteMany({ sentBy: req.user._id });
+        });
       res.send("Team joined");
-      // eslint-disable-next-line no-underscore-dangle
       console.log(updatedTeam);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  rejectInvite = async (req: Request, res: Response): Promise<void> => {
+    try {
+      await InviteModel.findByIdAndDelete(req.body.invite_id);
+      res.send("Invite rejected");
     } catch (error) {
       console.error(error);
     }

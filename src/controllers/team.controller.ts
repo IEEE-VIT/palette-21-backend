@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { TeamModel } from "../database/models/Team";
+import { UserModel } from "../database/models/User";
 
 class TeamController {
   allTeams = async (req: Request, res: Response): Promise<void> => {
@@ -22,20 +23,45 @@ class TeamController {
 
   addTeam = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { code } = req.params;
       const team = await new TeamModel(req.body);
       team.teamCode = Math.floor(Math.random() * 1000000 + 1).toString();
-      team.save().then(() => {
-        TeamModel.findOneAndUpdate(
-          { teamCode: code },
+      team.save().then(async () => {
+        await TeamModel.findOneAndUpdate(
+          { teamCode: team.teamCode },
           {
             // eslint-disable-next-line no-underscore-dangle
             $push: { users: req.user._id },
           }
-        );
+        ).then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await UserModel.findByIdAndUpdate(req.user._id, {
+            teamCode: team.teamCode,
+          });
+        });
       });
 
       res.send("Team added");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  leaveTeam = async (req: Request, res: Response): Promise<void> => {
+    try {
+      await TeamModel.findOneAndUpdate(
+        { teamCode: req.user.teamCode },
+        {
+          // eslint-disable-next-line no-underscore-dangle
+          $pull: { users: req.user._id },
+        }
+      ).then(async () => {
+        // eslint-disable-next-line no-underscore-dangle
+        await UserModel.findByIdAndUpdate(req.user._id, {
+          teamCode: "",
+        });
+      });
+
+      res.send("Left team");
     } catch (error) {
       console.log(error);
     }
