@@ -9,6 +9,7 @@
     "start": "nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
     "dev": "nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts",
     "lint": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix",
+    "build": "tsc",
     "prepare": "husky install",
     "pre-commit": "lint-staged"
   },
