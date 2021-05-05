@@ -1,6 +1,6 @@
 import express from "express";
 import { userModel } from "../database/models/User";
-import { teamModel } from "../database/models/Team";
+import { TeamModel } from "../database/models/Team";
 
 import { SuccessResponse, InternalErrorResponse } from "../core/ApiResponse";
 
@@ -60,10 +60,9 @@ class DashboardController {
         throw new Error("Enter a valid Page size");
       }
 
-      const teams = await teamModel
-        .find({
-          name: { $regex: name, $options: "i" },
-        })
+      const teams = await TeamModel.find({
+        name: { $regex: name, $options: "i" },
+      })
         .skip(pageNumber)
         .limit(limitValue);
       new SuccessResponse("These teams match the search criteria", teams).send(
@@ -95,7 +94,7 @@ class DashboardController {
         throw new Error("Enter a valid Page size");
       }
 
-      const teams = await teamModel.find().skip(pageNumber).limit(limitValue);
+      const teams = await TeamModel.find().skip(pageNumber).limit(limitValue);
       new SuccessResponse("These teams are found", teams).send(res);
     } catch (e) {
       console.log(e);
@@ -167,7 +166,7 @@ class DashboardController {
     res: express.Response
   ): Promise<void> => {
     try {
-      await teamModel.findOneAndUpdate(
+      await TeamModel.findOneAndUpdate(
         {
           // change to req.user
           _id: req.body.id,
