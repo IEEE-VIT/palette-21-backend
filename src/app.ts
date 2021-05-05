@@ -32,7 +32,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/saferoute", userAuthMiddleware, (req: Request, res: Response) => {
-  res.send("authorized");
+  res.send(req.user);
 });
 
 app.use("/v1", userAuthMiddleware, router);

@@ -22,9 +22,19 @@ class TeamController {
 
   addTeam = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { code } = req.params;
       const team = await new TeamModel(req.body);
       team.teamCode = Math.floor(Math.random() * 1000000 + 1).toString();
-      team.save();
+      team.save().then(() => {
+        TeamModel.findOneAndUpdate(
+          { teamCode: code },
+          {
+            // eslint-disable-next-line no-underscore-dangle
+            $push: { users: req.user._id },
+          }
+        );
+      });
+
       res.send("Team added");
     } catch (error) {
       console.log(error);
