@@ -16,6 +16,7 @@ interface IUser {
 const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
   new Promise<IUser>((resolve, reject) => {
     let user: IUser;
+    console.log(redirectUri);
     axios
       .post("https://www.figma.com/api/oauth/token", {
         client_id: process.env.figma_client_id,
