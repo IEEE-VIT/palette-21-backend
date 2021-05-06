@@ -7,27 +7,33 @@ import { UserModel } from "../database/models/User";
 class InviteController {
   myInvites = async (req: Request, res: Response): Promise<void> => {
     try {
-      // eslint-disable-next-line no-underscore-dangle
-      const invites = await InviteModel.find({ sentTo: req.user._id });
+      const invites = await InviteModel.find({ sentTo: req.user.id });
       res.send(invites);
     } catch (error) {
       console.error(error);
     }
   };
 
-  addInvite = async (req: Request, res: Response): Promise<void> => {
+  // test from here
+  sendInvite = async (req: Request, res: Response): Promise<void> => {
+    // addInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      // eslint-disable-next-line no-underscore-dangle
-      const invitesSent = (await InviteModel.find({ sentBy: req.user._id }))
-        .length;
-      if (invitesSent < 5) {
-        const invite = await new InviteModel({
-          team: req.body.teamId,
-          // eslint-disable-next-line no-underscore-dangle
-          sentBy: req.user._id,
-          sentTo: req.body.userId,
-        });
-        invite.save();
+      const invitesSent = await InviteModel.find({ sentBy: req.user.id });
+      const invite = {
+        teamCode: req.body.teamId,
+        sentBy: req.user.id,
+        sentTo: req.body.userId,
+      };
+      let valid = true;
+      invitesSent.forEach((tempInvite) => {
+        if (
+          tempInvite.teamCode === invite.teamCode &&
+          tempInvite.sentTo === invite.sentTo
+        )
+          valid = false;
+      });
+      if (invitesSent.length < 5 && valid) {
+        await new InviteModel(invite).save();
         res.send("Invite sent");
       } else {
         res.send("Already 5 invites sent");
@@ -36,11 +42,29 @@ class InviteController {
       console.error(error);
     }
   };
+  // try {
+  //   const invitesSent = (await InviteModel.find({ sentBy: req.user.id }))
+  //     .length;
+  //   if (invitesSent < 5) {
+  //     const invite = new InviteModel({
+  //       teamCode: req.user.teamCode,
+  //       sentBy: req.user.id,
+  //       sentTo: req.body.userId,
+  //     });
+  //     invite.save();
+  //     new SuccessResponse("Invite has been sent", true).send(res);
+  //   } else {
+  //     throw new Error("Invite could not be sent");
+  //   }
+  // } catch (error) {
+  //   console.error(error);
+  //   new InternalErrorResponse("Invite could not be sent").send(res);
+  // }
+  // };
 
   sentInvites = async (req: Request, res: Response): Promise<void> => {
     try {
-      // eslint-disable-next-line no-underscore-dangle
-      const invites = await InviteModel.find({ sentBy: req.user._id });
+      const invites = await InviteModel.find({ sentBy: req.user.id });
       res.send(invites);
     } catch (error) {
       console.error(error);
@@ -49,17 +73,15 @@ class InviteController {
 
   acceptInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      await TeamModel.findByIdAndUpdate(req.body.team, {
+      const { teamCode } = req.body;
+      await TeamModel.findOneAndUpdate(teamCode, {
         $push: { users: req.user.id },
-      })
-        .then(async () => {
-          await UserModel.findByIdAndUpdate(req.user.id, {
-            teamCode: (await TeamModel.findById(req.body.team)).teamCode,
-          });
-        })
-        .then(async () => {
-          await InviteModel.deleteMany({ sentBy: req.user.id });
-        });
+      });
+      await UserModel.findByIdAndUpdate(req.user.id, {
+        teamCode,
+      });
+      await InviteModel.deleteMany({ sentBy: req.user.id });
+      await InviteModel.deleteMany({ teamCode });
       res.send("Team joined");
     } catch (error) {
       console.error(error);
@@ -68,18 +90,20 @@ class InviteController {
 
   joinTeamByCode = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { teamCode } = req.body;
       TeamModel.findOneAndUpdate(
-        { teamCode: req.body.teamCode },
+        { teamCode },
         {
           $push: { users: req.user.id },
         }
       )
         .then(async () => {
           await UserModel.findByIdAndUpdate(req.user.id, {
-            teamCode: req.body.teamCode,
+            teamCode,
           });
         })
         .then(async () => {
+          await InviteModel.deleteMany({ teamCode });
           await InviteModel.deleteMany({ sentBy: req.user.id });
         });
       new SuccessResponse("User has joined the team", true).send(res);
