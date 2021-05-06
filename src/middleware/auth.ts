@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import passport from "passport";
 import { ExtractJwt } from "passport-jwt";
 // import { InternalErrorResponse } from "../core/ApiResponse";
-import { userModel } from "../database/models/User";
+import { UserModel } from "../database/models/User";
 
 const JwtStrategy = require("passport-jwt").Strategy;
 
@@ -20,7 +20,7 @@ passport.use(
   new JwtStrategy(opts, async (jwtPayload: any, done: any) => {
     try {
       console.log(jwtPayload.id);
-      const user = await userModel.findById(jwtPayload.id);
+      const user = await UserModel.findById(jwtPayload.id);
       done(null, user);
     } catch (error) {
       // new InternalErrorResponse("Something went wrong").send(res);

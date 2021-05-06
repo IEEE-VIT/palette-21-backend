@@ -1,5 +1,5 @@
 import express from "express";
-import User, { userModel } from "../database/models/User";
+import User, { UserModel } from "../database/models/User";
 import Team, { TeamModel } from "../database/models/Team";
 
 import { SuccessResponse, InternalErrorResponse } from "../core/ApiResponse";
@@ -10,7 +10,7 @@ class DashboardController {
     res: express.Response
   ): Promise<void> => {
     try {
-      await userModel.findOneAndUpdate(
+      await UserModel.findOneAndUpdate(
         {
           _id: req.user.id,
           needTeam: req.user.needTeam,
@@ -48,16 +48,15 @@ class DashboardController {
       if (limitValue <= 0) {
         throw new Error("Enter a valid Page size");
       }
-      const size: number = await userModel.countDocuments({
+      const size: number = await UserModel.countDocuments({
         name: { $regex: name, $options: "i" },
         _id: { $ne: req.user.id },
       });
 
-      const users: Array<User> = await userModel
-        .find({
-          name: { $regex: name, $options: "i" },
-          _id: { $ne: req.user.id },
-        })
+      const users: Array<User> = await UserModel.find({
+        name: { $regex: name, $options: "i" },
+        _id: { $ne: req.user.id },
+      })
         .skip(pageNumber)
         .limit(limitValue);
       new SuccessResponse("These users match the search criteria", {
@@ -170,16 +169,15 @@ class DashboardController {
         throw new Error("Enter a valid Page size");
       }
 
-      const size: number = await userModel.countDocuments({
+      const size: number = await UserModel.countDocuments({
         needTeam: true,
         _id: { $ne: req.user.id },
       });
 
-      const users: Array<User> = await userModel
-        .find({
-          needTeam: true,
-          _id: { $ne: req.user.id },
-        })
+      const users: Array<User> = await UserModel.find({
+        needTeam: true,
+        _id: { $ne: req.user.id },
+      })
         .skip(pageNumber)
         .limit(limitValue);
 

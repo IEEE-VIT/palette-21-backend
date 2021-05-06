@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
-import { userModel } from "../database/models/User";
+import { UserModel } from "../database/models/User";
 
 class UserController {
   round0 = async (req: Request, res: Response): Promise<void> => {
@@ -8,14 +8,14 @@ class UserController {
       const { id } = req.user;
       const { discordHandle, skills, tools, outreach } = req.body;
       const firstLogin = true;
-      await userModel.findOneAndUpdate(
+      await UserModel.findOneAndUpdate(
         { _id: id },
         { discordHandle, skills, tools, outreach, firstLogin }
       );
       new SuccessResponse("Round0 Filled", true).send(res);
     } catch (error) {
-      res.send("error making round 0 form");
-      console.log("Error submitting Round0 form:", error);
+      console.log(error);
+      new InternalErrorResponse("Unable to fill round0").send(res);
     }
   };
 

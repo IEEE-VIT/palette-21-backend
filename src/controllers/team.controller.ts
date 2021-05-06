@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import shortid from "shortid";
 import { TeamModel } from "../database/models/Team";
-import { userModel } from "../database/models/User";
+import { UserModel } from "../database/models/User";
 import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
 
 class TeamController {
@@ -56,7 +56,7 @@ class TeamController {
           tries: 0,
         });
 
-        await userModel.findOneAndUpdate({ _id: id }, { teamCode, needTeam });
+        await UserModel.findOneAndUpdate({ _id: id }, { teamCode, needTeam });
         new SuccessResponse("New Team Created", true).send(res);
       }
     } catch (error) {
