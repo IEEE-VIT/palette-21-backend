@@ -41,18 +41,14 @@ class InviteController {
 
   acceptInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const code = req.params.teamCode;
-      const updatedTeam = await TeamModel.findOneAndUpdate(
-        { teamCode: code },
-        {
-          // eslint-disable-next-line no-underscore-dangle
-          $push: { users: req.user._id },
-        }
-      )
+      const updatedTeam = TeamModel.findByIdAndUpdate(req.body.team, {
+        // eslint-disable-next-line no-underscore-dangle
+        $push: { users: req.user._id },
+      })
         .then(async () => {
           // eslint-disable-next-line no-underscore-dangle
           await UserModel.findByIdAndUpdate(req.user._id, {
-            teamCode: code,
+            teamCode: updatedTeam.teamCode,
           });
         })
         .then(async () => {
