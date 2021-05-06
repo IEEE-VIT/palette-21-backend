@@ -18,26 +18,34 @@ export default interface User extends Document {
 }
 
 const schema = new Schema({
-  userImg: Schema.Types.String,
+  userImg: { type: Schema.Types.String, default: "" },
   name: {
     type: Schema.Types.String,
-    default: true,
+    default: "",
   },
   email: {
     type: Schema.Types.String,
+    unique: true,
     required: true,
   },
-  firstLogin: Schema.Types.Boolean,
-  skills: Schema.Types.Array,
-  tools: Schema.Types.Array,
-  teamCode: Schema.Types.String,
-  needTeam: Schema.Types.Boolean,
+  firstLogin: { type: Schema.Types.Boolean, default: false },
+  skills: { type: Schema.Types.Array, default: [] },
+  tools: {
+    type: Schema.Types.Array,
+    default: [],
+  },
+  teamCode: { type: Schema.Types.String, default: "" },
+  needTeam: {
+    type: Schema.Types.Boolean,
+    default: true,
+  },
   invites: {
     type: Schema.Types.ObjectId,
     ref: "Invite",
+    default: [],
   },
-  discordHandle: Schema.Types.String,
-  outreach: Schema.Types.String,
+  discordHandle: { type: Schema.Types.String, default: "" },
+  outreach: { type: Schema.Types.String, default: "" },
 });
 
 export const userModel = model<User>(DOCUMENT_NAME, schema, COLLECTION_NAME);
