@@ -7,7 +7,6 @@ const inviteRouter = Router();
 
 inviteRouter.post("/joinbyCode", inviteController.joinTeamByCode);
 inviteRouter.post("/send", inviteController.sendInvite);
-inviteRouter.get("/acceptInvite", inviteController.acceptInvite);
 inviteRouter.get("/myInvites", inviteController.myInvites);
 inviteRouter.get("/sent/:teamCode", inviteController.sentInvites);
 // inviteRouter.post("/join/:teamCode", inviteController.acceptInvite);
