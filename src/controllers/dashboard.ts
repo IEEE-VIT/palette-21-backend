@@ -5,6 +5,30 @@ import Team, { TeamModel } from "../database/models/Team";
 import { SuccessResponse, InternalErrorResponse } from "../core/ApiResponse";
 
 class DashboardController {
+  toggleNeedTeam = async (
+    req: express.Request,
+    res: express.Response
+  ): Promise<void> => {
+    try {
+      await userModel.findOneAndUpdate(
+        {
+          _id: req.user.id,
+          needTeam: req.user.needTeam,
+        },
+        {
+          needTeam: !req.user.needTeam,
+        },
+        { new: true }
+      );
+      new SuccessResponse("The user's team status has been updated", true).send(
+        res
+      );
+    } catch (error) {
+      console.log(error);
+      new InternalErrorResponse("Error finding a team").send(res);
+    }
+  };
+
   searchUsers = async (
     req: express.Request,
     res: express.Response
@@ -17,7 +41,7 @@ class DashboardController {
       const skipValue: number = parseInt(skip, 10);
       const limitValue: number = parseInt(limit, 10);
 
-      const pageNumber = (skipValue - 1) * limitValue;
+      const pageNumber: number = (skipValue - 1) * limitValue;
       if (skipValue <= 0) {
         throw new Error("Enter a valid Page number");
       }
@@ -66,20 +90,20 @@ class DashboardController {
       if (limitValue <= 0) {
         throw new Error("Enter a valid Page size");
       }
-      const totalTeams: number = await TeamModel.countDocuments({
+      const size: number = await TeamModel.countDocuments({
         name: { $regex: name, $options: "i" },
+        users: { $ne: req.user.id },
       });
 
       const teams: Array<Team> = await TeamModel.find({
         name: { $regex: name, $options: "i" },
+        users: { $ne: req.user.id },
       })
         .skip(pageNumber)
         .limit(limitValue);
 
-      // check users team too and dont show it
-
       new SuccessResponse("These teams match the search criteria", {
-        totalTeams,
+        size,
         teams,
       }).send(res);
     } catch (e) {
@@ -109,16 +133,16 @@ class DashboardController {
       if (limitValue <= 0) {
         throw new Error("Enter a valid Page size");
       }
-      const totalTeams: number = (await TeamModel.countDocuments()) - 1;
+      const size: number = await TeamModel.countDocuments({
+        users: { $ne: req.user.id },
+      });
 
-      const teams: Array<Team> = await TeamModel.find()
+      const teams: Array<Team> = await TeamModel.find({
+        users: { $ne: req.user.id },
+      })
         .skip(pageNumber)
         .limit(limitValue);
-      // check users team too and dont show it
-
-      new SuccessResponse("These teams are found", { totalTeams, teams }).send(
-        res
-      );
+      new SuccessResponse("These teams are found", { size, teams }).send(res);
     } catch (e) {
       console.log(e);
       new InternalErrorResponse("Error finding a team").send(res);
@@ -166,52 +190,30 @@ class DashboardController {
     }
   };
 
-  needTeam = async (
+  editTeamName = async (
     req: express.Request,
     res: express.Response
   ): Promise<void> => {
     try {
-      await userModel.findOneAndUpdate(
+      const updatedTeam = await TeamModel.findOneAndUpdate(
         {
-          // change to req.user
-          _id: req.body.id,
-          // take this also from req.user.needteam
-          needTeam: req.user.needTeam,
-        },
-        {
-          needTeam: !req.user.needTeam,
-        }
-      );
-      new SuccessResponse("The user's team status has been updated", true).send(
-        res
-      );
-    } catch (error) {
-      console.log(error);
-      new InternalErrorResponse("Error finding a team").send(res);
-    }
-  };
-
-  editTeam = async (
-    req: express.Request,
-    res: express.Response
-  ): Promise<void> => {
-    try {
-      await TeamModel.findOneAndUpdate(
-        {
-          // change to req.user
-          "users.id": req.user.id,
-          // take this also from req.user.needteam
+          users: req.user.id,
         },
         {
           name: req.body.name,
-        }
+        },
+        { new: true }
       );
-      new SuccessResponse("The user's team status has been updated", true).send(
-        res
-      );
+      if (updatedTeam.name !== req.body.name) {
+        throw new Error("Couldn't update team name");
+      }
+      new SuccessResponse(
+        "The user's team status has been updated",
+        updatedTeam
+      ).send(res);
     } catch (error) {
       console.log(error);
-      new InternalErrorResponse("Error finding a team").send(res);
+      new InternalErrorResponse("Error updating team name").send(res);
     }
   };
 }

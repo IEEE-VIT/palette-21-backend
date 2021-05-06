@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import shortid from "shortid";
 import { TeamModel } from "../database/models/Team";
 import { userModel } from "../database/models/User";
+import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
 
 class TeamController {
   allTeams = async (req: Request, res: Response): Promise<void> => {
@@ -25,54 +26,42 @@ class TeamController {
   createTeam = async (req: Request, res: Response): Promise<void> => {
     try {
       shortid.characters(
-        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@$"
       );
-      const { teamName, needTeam = false } = req.body;
+
+      const { teamName, needTeam } = req.body;
       const { id } = req.user;
       const userTeamCode = req.user.teamCode;
-      let teamCode: string = shortid.generate();
-
+      let teamCode: string = shortid.generate().toUpperCase().substring(0, 6);
       if (userTeamCode) {
-        res.send("User Already has a team");
+        throw new Error("User Already has a team");
       } else {
         let flag = false;
-        console.log(1);
-        // const record = TeamModel.find();
-        const record = await TeamModel.findOne({
-          teamCode,
-        });
-        console.log(record);
+        const allRecords = await TeamModel.find({}, { teamCode: 1 });
+        const sameTeamCode = (newTeamCode: string): boolean =>
+          allRecords.some((team) => team.teamCode === newTeamCode);
         while (!flag) {
-          if (!record) {
-            console.log("team code was not found:>>");
-            console.log(2);
-            flag = true;
+          if (sameTeamCode(teamCode)) {
+            teamCode = shortid.generate().toUpperCase().substring(0, 6);
           } else {
-            teamCode = shortid.generate();
-            console.log(3);
+            flag = true;
           }
         }
-        console.log(4);
-        const teamInDb = await TeamModel.create({
+        await TeamModel.create({
+          name: teamName,
           teamCode,
           users: [id],
           invited: [],
-          name: teamName,
           problemStatement: [],
           tries: 0,
         });
 
-        const usertemp = await userModel.findOneAndUpdate(
-          { _id: id },
-          { teamCode, needTeam }
-        );
-        console.log("new record made:>>", teamInDb);
-        console.log("USER updated", usertemp);
-        res.send("success");
+        await userModel.findOneAndUpdate({ _id: id }, { teamCode, needTeam });
+        new SuccessResponse("New Team Created", true).send(res);
       }
     } catch (error) {
       console.log(error);
-      res.send(error);
+      new InternalErrorResponse("Error creating a team").send(res);
     }
   };
 

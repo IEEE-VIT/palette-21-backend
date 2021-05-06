@@ -1,13 +1,14 @@
 import { Router } from "express";
 import DashboardController from "../controllers/dashboard";
 
-const dashboarRouter = Router();
+const dashboardRouter = Router();
 const dashboard = new DashboardController();
 
-dashboarRouter.get("/findteammates", dashboard.findTeammates);
-dashboarRouter.get("/findteams", dashboard.findTeams);
-dashboarRouter.get("/needteam", dashboard.needTeam);
-dashboarRouter.get("/searchusers", dashboard.searchUsers);
-dashboarRouter.get("/searchteams", dashboard.searchTeams);
+dashboardRouter.get("/findteammates", dashboard.findTeammates);
+dashboardRouter.get("/findteams", dashboard.findTeams);
+dashboardRouter.get("/needteam", dashboard.toggleNeedTeam);
+dashboardRouter.get("/searchusers", dashboard.searchUsers);
+dashboardRouter.get("/searchteams", dashboard.searchTeams);
+dashboardRouter.post("/editteamname", dashboard.editTeamName);
 
-export default dashboarRouter;
+export default dashboardRouter;
