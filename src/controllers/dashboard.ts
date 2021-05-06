@@ -1,6 +1,6 @@
 import express from "express";
-import { userModel } from "../database/models/User";
-import { teamModel } from "../database/models/Team";
+import User, { userModel } from "../database/models/User";
+import Team, { TeamModel } from "../database/models/Team";
 
 import { SuccessResponse, InternalErrorResponse } from "../core/ApiResponse";
 
@@ -14,8 +14,8 @@ class DashboardController {
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
-      const skipValue = parseInt(skip, 10);
-      const limitValue = parseInt(limit, 10);
+      const skipValue: number = parseInt(skip, 10);
+      const limitValue: number = parseInt(limit, 10);
 
       const pageNumber = (skipValue - 1) * limitValue;
       if (skipValue <= 0) {
@@ -24,15 +24,22 @@ class DashboardController {
       if (limitValue <= 0) {
         throw new Error("Enter a valid Page size");
       }
-      const users = await userModel
+      const size: number = await userModel.countDocuments({
+        name: { $regex: name, $options: "i" },
+        _id: { $ne: req.user.id },
+      });
+
+      const users: Array<User> = await userModel
         .find({
           name: { $regex: name, $options: "i" },
+          _id: { $ne: req.user.id },
         })
         .skip(pageNumber)
         .limit(limitValue);
-      new SuccessResponse("These users match the search criteria", users).send(
-        res
-      );
+      new SuccessResponse("These users match the search criteria", {
+        size,
+        users,
+      }).send(res);
     } catch (e) {
       console.log(e);
       new InternalErrorResponse("Error searching a user").send(res);
@@ -47,10 +54,10 @@ class DashboardController {
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
-      const skipValue = parseInt(skip, 10);
-      const limitValue = parseInt(limit, 10);
+      const skipValue: number = parseInt(skip, 10);
+      const limitValue: number = parseInt(limit, 10);
 
-      const pageNumber = (skipValue - 1) * limitValue;
+      const pageNumber: number = (skipValue - 1) * limitValue;
       const { name } = req.body;
 
       if (skipValue <= 0) {
@@ -59,16 +66,22 @@ class DashboardController {
       if (limitValue <= 0) {
         throw new Error("Enter a valid Page size");
       }
+      const totalTeams: number = await TeamModel.countDocuments({
+        name: { $regex: name, $options: "i" },
+      });
 
-      const teams = await teamModel
-        .find({
-          name: { $regex: name, $options: "i" },
-        })
+      const teams: Array<Team> = await TeamModel.find({
+        name: { $regex: name, $options: "i" },
+      })
         .skip(pageNumber)
         .limit(limitValue);
-      new SuccessResponse("These teams match the search criteria", teams).send(
-        res
-      );
+
+      // check users team too and dont show it
+
+      new SuccessResponse("These teams match the search criteria", {
+        totalTeams,
+        teams,
+      }).send(res);
     } catch (e) {
       console.log(e);
       new InternalErrorResponse("Error searching a team").send(res);
@@ -80,13 +93,15 @@ class DashboardController {
     res: express.Response
   ): Promise<void> => {
     try {
+      console.log(req.user);
+
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
-      const skipValue = parseInt(skip, 10);
-      const limitValue = parseInt(limit, 10);
+      const skipValue: number = parseInt(skip, 10);
+      const limitValue: number = parseInt(limit, 10);
 
-      const pageNumber = (skipValue - 1) * limitValue;
+      const pageNumber: number = (skipValue - 1) * limitValue;
 
       if (skipValue <= 0) {
         throw new Error("Enter a valid Page number");
@@ -94,9 +109,16 @@ class DashboardController {
       if (limitValue <= 0) {
         throw new Error("Enter a valid Page size");
       }
+      const totalTeams: number = (await TeamModel.countDocuments()) - 1;
 
-      const teams = await teamModel.find().skip(pageNumber).limit(limitValue);
-      new SuccessResponse("These teams are found", teams).send(res);
+      const teams: Array<Team> = await TeamModel.find()
+        .skip(pageNumber)
+        .limit(limitValue);
+      // check users team too and dont show it
+
+      new SuccessResponse("These teams are found", { totalTeams, teams }).send(
+        res
+      );
     } catch (e) {
       console.log(e);
       new InternalErrorResponse("Error finding a team").send(res);
@@ -112,10 +134,10 @@ class DashboardController {
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
-      const skipValue = parseInt(skip, 10);
-      const limitValue = parseInt(limit, 10);
+      const skipValue: number = parseInt(skip, 10);
+      const limitValue: number = parseInt(limit, 10);
 
-      const pageNumber = (skipValue - 1) * limitValue;
+      const pageNumber: number = (skipValue - 1) * limitValue;
 
       if (skipValue <= 0) {
         throw new Error("Enter a valid Page number");
@@ -124,13 +146,20 @@ class DashboardController {
         throw new Error("Enter a valid Page size");
       }
 
-      const users = await userModel
+      const size: number = await userModel.countDocuments({
+        needTeam: true,
+        _id: { $ne: req.user.id },
+      });
+
+      const users: Array<User> = await userModel
         .find({
           needTeam: true,
+          _id: { $ne: req.user.id },
         })
         .skip(pageNumber)
         .limit(limitValue);
-      new SuccessResponse("These users are found", users).send(res);
+
+      new SuccessResponse("These users are found", { size, users }).send(res);
     } catch (error) {
       console.log(error);
       new InternalErrorResponse("Error finding teammates").send(res);
@@ -147,10 +176,10 @@ class DashboardController {
           // change to req.user
           _id: req.body.id,
           // take this also from req.user.needteam
-          needTeam: req.body.needTeam,
+          needTeam: req.user.needTeam,
         },
         {
-          needTeam: !req.body.needTeam,
+          needTeam: !req.user.needTeam,
         }
       );
       new SuccessResponse("The user's team status has been updated", true).send(
@@ -167,15 +196,14 @@ class DashboardController {
     res: express.Response
   ): Promise<void> => {
     try {
-      await teamModel.findOneAndUpdate(
+      await TeamModel.findOneAndUpdate(
         {
           // change to req.user
-          _id: req.body.id,
+          "users.id": req.user.id,
           // take this also from req.user.needteam
-          needTeam: req.body.needTeam,
         },
         {
-          needTeam: !req.body.needTeam,
+          name: req.body.name,
         }
       );
       new SuccessResponse("The user's team status has been updated", true).send(
