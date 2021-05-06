@@ -16,14 +16,21 @@ class InviteController {
 
   addInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const invite = await new InviteModel({
-        team: req.body.teamId,
-        // eslint-disable-next-line no-underscore-dangle
-        sentBy: req.user._id,
-        sentTo: req.body.userId,
-      });
-      invite.save();
-      res.send("Invite sent");
+      // eslint-disable-next-line no-underscore-dangle
+      const invitesSent = (await InviteModel.find({ sentBy: req.user._id }))
+        .length;
+      if (invitesSent < 5) {
+        const invite = await new InviteModel({
+          team: req.body.teamId,
+          // eslint-disable-next-line no-underscore-dangle
+          sentBy: req.user._id,
+          sentTo: req.body.userId,
+        });
+        invite.save();
+        res.send("Invite sent");
+      } else {
+        res.send("Already 5 invites sent");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +52,32 @@ class InviteController {
         // eslint-disable-next-line no-underscore-dangle
         $push: { users: req.user._id },
       })
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await UserModel.findByIdAndUpdate(req.user._id, {
+            teamCode: updatedTeam.teamCode,
+          });
+        })
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await InviteModel.deleteMany({ sentBy: req.user._id });
+        });
+      res.send("Team joined");
+      console.log(updatedTeam);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  joinTeamByCode = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const updatedTeam = TeamModel.findOneAndUpdate(
+        { teamCode: req.body.teamCode },
+        {
+          // eslint-disable-next-line no-underscore-dangle
+          $push: { users: req.user._id },
+        }
+      )
         .then(async () => {
           // eslint-disable-next-line no-underscore-dangle
           await UserModel.findByIdAndUpdate(req.user._id, {
