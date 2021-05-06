@@ -51,11 +51,13 @@ class DashboardController {
       const size: number = await UserModel.countDocuments({
         name: { $regex: name, $options: "i" },
         _id: { $ne: req.user.id },
+        needTeam: true,
       });
 
       const users: Array<User> = await UserModel.find({
         name: { $regex: name, $options: "i" },
         _id: { $ne: req.user.id },
+        needTeam: true,
       })
         .skip(pageNumber)
         .limit(limitValue);
@@ -141,6 +143,7 @@ class DashboardController {
       })
         .skip(pageNumber)
         .limit(limitValue);
+
       new SuccessResponse("These teams are found", { size, teams }).send(res);
     } catch (e) {
       console.log(e);
