@@ -70,12 +70,10 @@ class TeamController {
       await TeamModel.findOneAndUpdate(
         { teamCode: req.user.teamCode },
         {
-          // eslint-disable-next-line no-underscore-dangle
-          $pull: { users: req.user._id },
+          $pull: { users: req.user.id },
         }
       ).then(async () => {
-        // eslint-disable-next-line no-underscore-dangle
-        await UserModel.findByIdAndUpdate(req.user._id, {
+        await UserModel.findByIdAndUpdate(req.user.id, {
           teamCode: "",
         });
       });

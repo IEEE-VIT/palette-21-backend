@@ -20,7 +20,7 @@ class InviteController {
     try {
       const invitesSent = await InviteModel.find({ sentBy: req.user.id });
       const invite = {
-        teamCode: req.body.teamId,
+        teamCode: req.body.teamCode,
         sentBy: req.user.id,
         sentTo: req.body.userId,
       };
@@ -71,23 +71,6 @@ class InviteController {
     }
   };
 
-  acceptInvite = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { teamCode } = req.body;
-      await TeamModel.findOneAndUpdate(teamCode, {
-        $push: { users: req.user.id },
-      });
-      await UserModel.findByIdAndUpdate(req.user.id, {
-        teamCode,
-      });
-      await InviteModel.deleteMany({ sentBy: req.user.id });
-      await InviteModel.deleteMany({ teamCode });
-      res.send("Team joined");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   joinTeamByCode = async (req: Request, res: Response): Promise<void> => {
     try {
       const { teamCode } = req.body;
@@ -115,7 +98,8 @@ class InviteController {
 
   rejectInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      await InviteModel.findByIdAndDelete(req.body.invite_id);
+      const { teamCode } = req.body;
+      await InviteModel.findOneAndDelete({ teamCode });
       res.send("Invite rejected");
     } catch (error) {
       console.error(error);
