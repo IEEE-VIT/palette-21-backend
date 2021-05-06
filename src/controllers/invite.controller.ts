@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
 import { InviteModel } from "../database/models/Invite";
 import { TeamModel } from "../database/models/Team";
 import { UserModel } from "../database/models/User";
@@ -48,22 +49,18 @@ class InviteController {
 
   acceptInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const updatedTeam = TeamModel.findByIdAndUpdate(req.body.team, {
-        // eslint-disable-next-line no-underscore-dangle
-        $push: { users: req.user._id },
+      await TeamModel.findByIdAndUpdate(req.body.team, {
+        $push: { users: req.user.id },
       })
         .then(async () => {
-          // eslint-disable-next-line no-underscore-dangle
-          await UserModel.findByIdAndUpdate(req.user._id, {
-            teamCode: updatedTeam.teamCode,
+          await UserModel.findByIdAndUpdate(req.user.id, {
+            teamCode: (await TeamModel.findById(req.body.team)).teamCode,
           });
         })
         .then(async () => {
-          // eslint-disable-next-line no-underscore-dangle
-          await InviteModel.deleteMany({ sentBy: req.user._id });
+          await InviteModel.deleteMany({ sentBy: req.user.id });
         });
       res.send("Team joined");
-      console.log(updatedTeam);
     } catch (error) {
       console.error(error);
     }
@@ -71,27 +68,24 @@ class InviteController {
 
   joinTeamByCode = async (req: Request, res: Response): Promise<void> => {
     try {
-      const updatedTeam = TeamModel.findOneAndUpdate(
+      TeamModel.findOneAndUpdate(
         { teamCode: req.body.teamCode },
         {
-          // eslint-disable-next-line no-underscore-dangle
-          $push: { users: req.user._id },
+          $push: { users: req.user.id },
         }
       )
         .then(async () => {
-          // eslint-disable-next-line no-underscore-dangle
-          await UserModel.findByIdAndUpdate(req.user._id, {
-            teamCode: updatedTeam.teamCode,
+          await UserModel.findByIdAndUpdate(req.user.id, {
+            teamCode: req.body.teamCode,
           });
         })
         .then(async () => {
-          // eslint-disable-next-line no-underscore-dangle
-          await InviteModel.deleteMany({ sentBy: req.user._id });
+          await InviteModel.deleteMany({ sentBy: req.user.id });
         });
-      res.send("Team joined");
-      console.log(updatedTeam);
+      new SuccessResponse("User has joined the team", true).send(res);
     } catch (error) {
       console.error(error);
+      new InternalErrorResponse("Unable to join team").send(res);
     }
   };
 

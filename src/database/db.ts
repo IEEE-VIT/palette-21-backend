@@ -42,7 +42,7 @@ const connect = (): void => {
   database = mongoose.connection;
 
   database.once("open", async () => {
-    console.log(`Mongoose default connection open to ${dbURI}`);
+    console.log(`Mongoose default connection opened`);
   });
 
   database.on("error", () => {

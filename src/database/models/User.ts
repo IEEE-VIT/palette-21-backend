@@ -39,11 +39,6 @@ const schema = new Schema({
     type: Schema.Types.Boolean,
     default: true,
   },
-  invites: {
-    type: Schema.Types.ObjectId,
-    ref: "Invite",
-    default: [],
-  },
   discordHandle: { type: Schema.Types.String, default: "" },
   outreach: { type: Schema.Types.String, default: "" },
 });
