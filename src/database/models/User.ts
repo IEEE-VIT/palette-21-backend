@@ -12,8 +12,9 @@ export default interface User extends Document {
   tools: [];
   teamCode: string;
   needTeam: boolean;
-  token: string;
   invites: [];
+  discordHandle: string;
+  outreach: string;
 }
 
 const schema = new Schema({
@@ -31,11 +32,12 @@ const schema = new Schema({
   tools: Schema.Types.Array,
   teamCode: Schema.Types.String,
   needTeam: Schema.Types.Boolean,
-  token: Schema.Types.String,
   invites: {
     type: Schema.Types.ObjectId,
     ref: "Invite",
   },
+  discordHandle: Schema.Types.String,
+  outreach: Schema.Types.String,
 });
 
 export const userModel = model<User>(DOCUMENT_NAME, schema, COLLECTION_NAME);
