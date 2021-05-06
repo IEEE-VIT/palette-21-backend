@@ -65,6 +65,27 @@ class TeamController {
     }
   };
 
+  leaveTeam = async (req: Request, res: Response): Promise<void> => {
+    try {
+      await TeamModel.findOneAndUpdate(
+        { teamCode: req.user.teamCode },
+        {
+          // eslint-disable-next-line no-underscore-dangle
+          $pull: { users: req.user._id },
+        }
+      ).then(async () => {
+        // eslint-disable-next-line no-underscore-dangle
+        await UserModel.findByIdAndUpdate(req.user._id, {
+          teamCode: "",
+        });
+      });
+
+      res.send("Left team");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   updateTeam = async (req: Request, res: Response): Promise<void> => {
     try {
       const team = await TeamModel.findOneAndUpdate(

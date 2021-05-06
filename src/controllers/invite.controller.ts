@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import { InviteModel } from "../database/models/Invite";
 import { TeamModel } from "../database/models/Team";
+import { UserModel } from "../database/models/User";
 
 class InviteController {
   myInvites = async (req: Request, res: Response): Promise<void> => {
     try {
-      const invites = await InviteModel.find({ recipient: req.params.userId });
+      // eslint-disable-next-line no-underscore-dangle
+      const invites = await InviteModel.find({ sentTo: req.user._id });
       res.send(invites);
     } catch (error) {
       console.error(error);
@@ -14,9 +16,21 @@ class InviteController {
 
   addInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const invite = await new InviteModel(req.body);
-      invite.save();
-      res.send("Invite sent");
+      // eslint-disable-next-line no-underscore-dangle
+      const invitesSent = (await InviteModel.find({ sentBy: req.user._id }))
+        .length;
+      if (invitesSent < 5) {
+        const invite = await new InviteModel({
+          team: req.body.teamId,
+          // eslint-disable-next-line no-underscore-dangle
+          sentBy: req.user._id,
+          sentTo: req.body.userId,
+        });
+        invite.save();
+        res.send("Invite sent");
+      } else {
+        res.send("Already 5 invites sent");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -24,7 +38,8 @@ class InviteController {
 
   sentInvites = async (req: Request, res: Response): Promise<void> => {
     try {
-      const invites = await InviteModel.find({ teamCode: req.params.code });
+      // eslint-disable-next-line no-underscore-dangle
+      const invites = await InviteModel.find({ sentBy: req.user._id });
       res.send(invites);
     } catch (error) {
       console.error(error);
@@ -33,14 +48,57 @@ class InviteController {
 
   acceptInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { code } = req.params;
-      const updatedTeam = await TeamModel.findOneAndUpdate(
-        { teamCode: code },
+      const updatedTeam = TeamModel.findByIdAndUpdate(req.body.team, {
+        // eslint-disable-next-line no-underscore-dangle
+        $push: { users: req.user._id },
+      })
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await UserModel.findByIdAndUpdate(req.user._id, {
+            teamCode: updatedTeam.teamCode,
+          });
+        })
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await InviteModel.deleteMany({ sentBy: req.user._id });
+        });
+      res.send("Team joined");
+      console.log(updatedTeam);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  joinTeamByCode = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const updatedTeam = TeamModel.findOneAndUpdate(
+        { teamCode: req.body.teamCode },
         {
-          $push: { users: req.body.userId },
+          // eslint-disable-next-line no-underscore-dangle
+          $push: { users: req.user._id },
         }
-      );
-      res.send(updatedTeam);
+      )
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await UserModel.findByIdAndUpdate(req.user._id, {
+            teamCode: updatedTeam.teamCode,
+          });
+        })
+        .then(async () => {
+          // eslint-disable-next-line no-underscore-dangle
+          await InviteModel.deleteMany({ sentBy: req.user._id });
+        });
+      res.send("Team joined");
+      console.log(updatedTeam);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  rejectInvite = async (req: Request, res: Response): Promise<void> => {
+    try {
+      await InviteModel.findByIdAndDelete(req.body.invite_id);
+      res.send("Invite rejected");
     } catch (error) {
       console.error(error);
     }

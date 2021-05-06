@@ -4,20 +4,24 @@ export const DOCUMENT_NAME = "Invite";
 export const COLLECTION_NAME = "invites";
 
 export default interface Invite extends Document {
-  teamCode: string;
-  recipient: string;
+  team: string;
+  sentBy: string;
+  sentTo: string;
   status: false;
 }
 
 const schema = new Schema({
-  teamCode: {
-    type: Schema.Types.String,
-    required: "True",
+  team: {
+    type: Schema.Types.ObjectId,
+    ref: "Team",
   },
-  recipient: {
+  sentBy: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: "True",
+  },
+  sentTo: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
   },
   status: {
     type: Schema.Types.Boolean,
