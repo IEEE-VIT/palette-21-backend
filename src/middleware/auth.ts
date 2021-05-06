@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/ban-types */
+
 import jwt from "jsonwebtoken";
 import passport from "passport";
 import { ExtractJwt } from "passport-jwt";
+// import { InternalErrorResponse } from "../core/ApiResponse";
 import { userModel } from "../database/models/User";
 
 const JwtStrategy = require("passport-jwt").Strategy;
@@ -18,11 +20,10 @@ passport.use(
   new JwtStrategy(opts, async (jwtPayload: any, done: any) => {
     try {
       console.log(jwtPayload.id);
-      console.log("hehehheehe");
       const user = await userModel.findById(jwtPayload.id);
-      console.log(user);
       done(null, user);
     } catch (error) {
+      // new InternalErrorResponse("Something went wrong").send(res);
       console.log("JWT Middleware error:>>", error);
       done(null, false);
     }
