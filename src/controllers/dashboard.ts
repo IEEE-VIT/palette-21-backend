@@ -10,6 +10,18 @@ import {
 } from "../core/ApiResponse";
 
 class DashboardController {
+  profile = async (
+    req: express.Request,
+    res: express.Response
+  ): Promise<void> => {
+    try {
+      const user = await UserModel.findOne(req.user.id);
+      new SuccessResponse("User profile fetched", user).send(res);
+    } catch (error) {
+      new InternalErrorResponse("Not authenticated").send(res);
+    }
+  };
+
   toggleNeedTeam = async (
     req: express.Request,
     res: express.Response
@@ -61,11 +73,14 @@ class DashboardController {
         needTeam: true,
       });
 
-      const users: Array<User> = await UserModel.find({
-        name: { $regex: name, $options: "i" },
-        _id: { $ne: id },
-        needTeam: true,
-      })
+      const users: Array<User> = await UserModel.find(
+        {
+          name: { $regex: name, $options: "i" },
+          _id: { $ne: id },
+          needTeam: true,
+        },
+        "-email -teamCode"
+      )
         .skip(pageNumber)
         .limit(limitValue);
       new SuccessResponse("These users match the search criteria", {
@@ -107,7 +122,7 @@ class DashboardController {
         name: { $regex: name, $options: "i" },
         users: { $ne: id },
       })
-        .populate("users")
+        .populate("users", "-email -teamCode")
         .skip(pageNumber)
         .limit(limitValue);
 

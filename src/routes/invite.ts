@@ -10,6 +10,7 @@ inviteRouter.get("/received", inviteController.receivedInvites);
 inviteRouter.post("/send", inviteController.sendInvite);
 inviteRouter.post("/accept", inviteController.acceptInvite);
 inviteRouter.post("/joinbyCode", inviteController.joinTeamByCode);
-inviteRouter.post("/rejectInvite", inviteController.rejectInvite);
+inviteRouter.post("/reject", inviteController.rejectInvite);
+inviteRouter.get("/cancel", inviteController.cancelInvite);
 
 export default inviteRouter;
