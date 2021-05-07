@@ -11,7 +11,7 @@ export default interface Invite extends Document {
 }
 
 const schema = new Schema({
-  teamCode: {
+  teamId: {
     type: Schema.Types.String,
   },
   sentBy: {
@@ -21,10 +21,6 @@ const schema = new Schema({
   sentTo: {
     type: Schema.Types.ObjectId,
     ref: "User",
-  },
-  status: {
-    type: Schema.Types.Boolean,
-    default: false,
   },
 });
 

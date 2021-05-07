@@ -1,63 +1,140 @@
 import { Request, Response } from "express";
-import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
+import {
+  BadRequestResponse,
+  ForbiddenResponse,
+  InternalErrorResponse,
+  NotFoundResponse,
+  SuccessResponse,
+} from "../core/ApiResponse";
 import { InviteModel } from "../database/models/Invite";
 import { TeamModel } from "../database/models/Team";
 import { UserModel } from "../database/models/User";
 
 class InviteController {
-  myInvites = async (req: Request, res: Response): Promise<void> => {
+  sentInvites = async (req: Request, res: Response): Promise<void> => {
     try {
-      const invites = await InviteModel.find({ sentTo: req.user.id });
-      res.send(invites);
+      const { id } = req.user;
+      const invites = await InviteModel.find({ sentBy: id });
+      if (!invites) {
+        new NotFoundResponse("You have not sent any invites yet").send(res);
+      }
+      new SuccessResponse(
+        "Your sent invites have been displayed",
+        invites
+      ).send(res);
     } catch (error) {
       console.error(error);
+      new InternalErrorResponse("Error fetching the invites you sent").send(
+        res
+      );
+    }
+  };
+
+  receivedInvites = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.user;
+
+      const invites = await InviteModel.find({ sentTo: id });
+      if (!invites) {
+        new NotFoundResponse("You have not received any invites yet").send(res);
+      }
+      new SuccessResponse(
+        "The invites you have received have been displayed",
+        invites
+      ).send(res);
+    } catch (error) {
+      console.error(error);
+      new InternalErrorResponse("Error fetching the invites you received").send(
+        res
+      );
     }
   };
 
   sendInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const invitesSent = await InviteModel.find({ sentBy: req.user.id });
-      const invite = {
-        teamCode: req.body.teamCode,
-        sentBy: req.user.id,
-        sentTo: req.body.userId,
-      };
-      if (req.user.id === req.body.userId) {
-        throw new Error("You cannot send an invite to yourself");
-      }
-      const inviteReceiver = await UserModel.findById(req.body.userId);
-      if (!inviteReceiver.needTeam) {
-        throw new Error("User does not need a team");
-      }
-
-      let valid = true;
-      invitesSent.forEach((tempInvite) => {
-        if (
-          tempInvite.teamCode === invite.teamCode &&
-          tempInvite.sentTo === invite.sentTo
-        )
-          valid = false;
-      });
-      if (invitesSent.length < 5 && valid) {
-        await new InviteModel(invite).save();
-        new SuccessResponse("Invite has been succesfully sent.", invite).send(
+      const { id } = req.user;
+      const { receiversId, teamId } = req.body;
+      if (id === req.body.userId) {
+        new ForbiddenResponse("You cannot send an invite to yourself").send(
           res
         );
-      } else {
-        throw new Error("You cannot send an invite to this person now.");
       }
+      const inviteReceiver = await UserModel.findById(receiversId);
+      if (!inviteReceiver.needTeam) {
+        new ForbiddenResponse("User does not need a team").send(res);
+      }
+      const sameInvite = await InviteModel.find({
+        sentBy: id,
+        sentTo: receiversId,
+      });
+      if (sameInvite) {
+        new ForbiddenResponse("You have already sent this user an invite").send(
+          res
+        );
+      }
+      const numberOfInvitesByUser = await InviteModel.countDocuments({
+        sentBy: id,
+      });
+      if (numberOfInvitesByUser >= 5) {
+        new ForbiddenResponse(
+          "You have already reached the limit of sending invites! Wait till a user rejects your invite to send more"
+        ).send(res);
+      }
+
+      const userIsInTeam = await TeamModel.findOne({
+        users: id,
+      });
+      if (!userIsInTeam) {
+        new ForbiddenResponse("Please send an invite from your team").send(res);
+      }
+
+      const inviteSent = await InviteModel.create({
+        teamId,
+        sentBy: id,
+        sentTo: receiversId,
+      });
+      if (!inviteSent) {
+        new InternalErrorResponse("Error sending an invite to the user").send(
+          res
+        );
+      }
+      new SuccessResponse("Invite sent succesfully", inviteSent).send(res);
     } catch (error) {
       console.error(error);
-      new InternalErrorResponse("Error sending an invite").send(res);
+      new InternalErrorResponse(
+        "Error sending an invite! Please try again"
+      ).send(res);
     }
   };
 
-  sentInvites = async (req: Request, res: Response): Promise<void> => {
+  acceptInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const invites = await InviteModel.find({ sentBy: req.user.id });
-      res.send(invites);
+      const { id } = req.user;
+      const { receiversId, teamId } = req.body;
+      const verifyInvite = await InviteModel.find({
+        teamId,
+        sentBy: id,
+        sentTo: receiversId,
+      });
+      if (!verifyInvite) {
+        new NotFoundResponse("No such invite exists").send(res);
+      }
+      const updatedTeam = await TeamModel.findByIdAndUpdate(teamId, {
+        $push: { users: id },
+      });
+      if (!updatedTeam) {
+        new NotFoundResponse("No such team exists").send(res);
+      }
+      const updatedUser = await UserModel.findByIdAndUpdate(id, {
+        teamCode: updatedTeam.teamCode,
+      });
+      if (!updatedUser) {
+        new NotFoundResponse("No such user found").send(res);
+      }
+      new SuccessResponse("Invite has been accepted", updatedTeam).send(res);
     } catch (error) {
       console.error(error);
+      new InternalErrorResponse("Error accepting the invite!").send(res);
     }
   };
 
@@ -69,9 +146,12 @@ class InviteController {
       const teamFromCodeEntered = await TeamModel.findOneAndUpdate(
         { teamCode },
         {
-          $push: { users: req.user.id },
+          $push: { users: id },
         }
       );
+      if (!teamFromCodeEntered) {
+        new NotFoundResponse("Please check the team code again").send(res);
+      }
       const userInTheSameTeam = teamFromCodeEntered.users.some(
         (userId: any) => {
           if (!userId.equals(id)) {
@@ -81,29 +161,26 @@ class InviteController {
         }
       );
       if (userInTheSameTeam) {
-        throw new Error("User is in the same team");
+        new ForbiddenResponse("User is in the same team").send(res);
       }
-      if (!teamFromCodeEntered) {
-        throw new Error("Please check the team code again");
-      }
-      const updateJoiningUser = await UserModel.findByIdAndUpdate(req.user.id, {
+      const updateJoiningUser = await UserModel.findByIdAndUpdate(id, {
         teamCode,
         needTeam: false,
       });
       if (!updateJoiningUser) {
-        throw new Error("Could not update the joining user");
+        new NotFoundResponse("User not found!").send(res);
       }
       const updateTeammate = await UserModel.findByIdAndUpdate(teammateId, {
         needTeam: false,
       });
       if (!updateTeammate) {
-        throw new Error("Could not update the teammate's profile");
+        new NotFoundResponse("Teammate not found!").send(res);
       }
       const deleteInvites = await InviteModel.deleteMany({
-        $or: [{ teamCode }, { sentBy: req.user.id }],
+        $or: [{ teamCode }, { sentBy: id }],
       });
       if (!deleteInvites) {
-        throw new Error("Could not delete invites");
+        new InternalErrorResponse("Could not delete invites").send(res);
       }
       new SuccessResponse("User has joined the team", true).send(res);
     } catch (error) {
@@ -114,11 +191,23 @@ class InviteController {
 
   rejectInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { teamCode } = req.body;
-      await InviteModel.findOneAndDelete({ teamCode });
-      res.send("Invite rejected");
+      const { teamId } = req.body;
+      const { id } = req.user;
+      const verifyInvite = await InviteModel.find({
+        teamId,
+        sentTo: id,
+      });
+      if (!verifyInvite) {
+        new NotFoundResponse("No such invite exists").send(res);
+      }
+      const deletedInvite = await InviteModel.findOneAndDelete({ teamId });
+      if (!deletedInvite) {
+        new InternalErrorResponse("Error deleting the invites").send(res);
+      }
+      new SuccessResponse("User has rejected the invite", true).send(res);
     } catch (error) {
       console.error(error);
+      new InternalErrorResponse("Unable to reject invite!").send(res);
     }
   };
 }

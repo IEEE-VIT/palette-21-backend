@@ -5,24 +5,6 @@ import { UserModel } from "../database/models/User";
 import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
 
 class TeamController {
-  allTeams = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const teams = await TeamModel.find();
-      res.send(teams);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  fetchTeam = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const team = await TeamModel.findOne({ teamCode: req.params.code });
-      res.send(team);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   createTeam = async (req: Request, res: Response): Promise<void> => {
     try {
       shortid.characters(
@@ -115,27 +97,6 @@ class TeamController {
     } catch (error) {
       console.log(error);
       new InternalErrorResponse("Error leaving the team").send(res);
-    }
-  };
-
-  updateTeam = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const team = await TeamModel.findOneAndUpdate(
-        { teamCode: req.params.code },
-        req.body
-      );
-      res.send(team);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  deleteTeam = async (req: Request, res: Response): Promise<void> => {
-    try {
-      await TeamModel.deleteOne({ teamCode: req.params.code });
-      res.send("Team deleted");
-    } catch (error) {
-      console.error(error);
     }
   };
 }

@@ -5,10 +5,11 @@ const inviteController = new InviteController();
 
 const inviteRouter = Router();
 
-inviteRouter.post("/joinbyCode", inviteController.joinTeamByCode);
+inviteRouter.get("/sent", inviteController.sentInvites);
+inviteRouter.get("/received", inviteController.receivedInvites);
 inviteRouter.post("/send", inviteController.sendInvite);
+inviteRouter.post("/accept", inviteController.acceptInvite);
+inviteRouter.post("/joinbyCode", inviteController.joinTeamByCode);
 inviteRouter.post("/rejectInvite", inviteController.rejectInvite);
-inviteRouter.get("/myInvites", inviteController.myInvites);
-inviteRouter.get("/sent/:teamCode", inviteController.sentInvites);
 
 export default inviteRouter;

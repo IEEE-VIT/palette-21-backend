@@ -32,7 +32,9 @@ class AuthController {
       }).send(res);
     } catch (error) {
       console.log(error);
-      new InternalErrorResponse("Error logging in through Figma").send(res);
+      new InternalErrorResponse(
+        "Error logging in through Figma! Please try again"
+      ).send(res);
     }
   };
 
@@ -60,7 +62,9 @@ class AuthController {
       }).send(res);
     } catch (error) {
       console.log(error);
-      new InternalErrorResponse("Error logging in through Google").send(res);
+      new InternalErrorResponse(
+        "Error logging in through Google! Please try again"
+      ).send(res);
     }
   };
 }
