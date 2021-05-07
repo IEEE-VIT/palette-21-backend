@@ -5,6 +5,7 @@ import connect from "./database/db";
 
 import router from "./routes/index";
 import authRouter from "./routes/auth";
+import { SuccessResponse } from "./core/ApiResponse";
 
 dotenv.config();
 
@@ -28,11 +29,10 @@ connect();
 
 app.get("/", (req: Request, res: Response) => {
   console.log("Hello Palette");
-  res.send("hello");
-});
-
-app.get("/saferoute", userAuthMiddleware, (req: Request, res: Response) => {
-  res.send(req.user);
+  new SuccessResponse(
+    "Okay Clever person! It's a design hack go hack the designs. Stop viewing our API",
+    true
+  ).send(res);
 });
 
 app.use("/v1", userAuthMiddleware, router);

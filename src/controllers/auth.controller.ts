@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { SuccessResponse, InternalErrorResponse } from "../core/ApiResponse";
+import { SuccessResponse, AuthFailureResponse } from "../core/ApiResponse";
 import { UserModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
 import figmaAuth from "./auth/figma.auth";
@@ -32,7 +32,7 @@ class AuthController {
       }).send(res);
     } catch (error) {
       console.log(error);
-      new InternalErrorResponse(
+      new AuthFailureResponse(
         "Error logging in through Figma! Please try again"
       ).send(res);
     }
@@ -62,7 +62,7 @@ class AuthController {
       }).send(res);
     } catch (error) {
       console.log(error);
-      new InternalErrorResponse(
+      new AuthFailureResponse(
         "Error logging in through Google! Please try again"
       ).send(res);
     }

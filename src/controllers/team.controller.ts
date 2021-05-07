@@ -2,7 +2,12 @@ import { Request, Response } from "express";
 import shortid from "shortid";
 import { TeamModel } from "../database/models/Team";
 import { UserModel } from "../database/models/User";
-import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
+import {
+  ForbiddenResponse,
+  InternalErrorResponse,
+  NotFoundResponse,
+  SuccessResponse,
+} from "../core/ApiResponse";
 
 class TeamController {
   createTeam = async (req: Request, res: Response): Promise<void> => {
@@ -16,7 +21,7 @@ class TeamController {
       const userTeamCode = req.user.teamCode;
       let teamCode: string = shortid.generate().toUpperCase().substring(0, 6);
       if (userTeamCode) {
-        throw new Error("User Already has a team");
+        new ForbiddenResponse("User Already has a team").send(res);
       } else {
         let flag = false;
         const allRecords = await TeamModel.find({}, { teamCode: 1 });
@@ -52,23 +57,23 @@ class TeamController {
       shortid.characters(
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@$"
       );
-      const { id } = req.user;
+      const { id, name } = req.user;
       let teamCode: string = shortid.generate().toUpperCase().substring(0, 6);
 
       const leftTeam = await TeamModel.findOneAndUpdate(
         { teamCode: req.user.teamCode },
         {
-          $pull: { users: req.user.id },
+          $pull: { users: id },
         }
       );
       if (!leftTeam) {
-        throw new Error("Error leaving a team");
+        new NotFoundResponse("User is not a part of the team name").send(res);
       }
-      const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, {
+      const updatedUser = await UserModel.findByIdAndUpdate(id, {
         teamCode: "",
       });
       if (!updatedUser) {
-        throw new Error("Error updating the user");
+        new NotFoundResponse("User not found to update the team").send(res);
       }
       let flag = false;
       const allRecords = await TeamModel.find({}, { teamCode: 1 });
@@ -81,7 +86,7 @@ class TeamController {
           flag = true;
         }
       }
-      const userName = req.user.name.split(" ")[0];
+      const userName = name.split(" ")[0];
       const newTeamName = `${userName}'s Team`;
 
       await TeamModel.create({

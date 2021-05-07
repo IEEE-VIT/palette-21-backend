@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import {
-  BadRequestResponse,
   ForbiddenResponse,
   InternalErrorResponse,
   NotFoundResponse,
@@ -55,7 +54,7 @@ class InviteController {
     try {
       const { id } = req.user;
       const { receiversId, teamId } = req.body;
-      if (id === req.body.userId) {
+      if (id === receiversId) {
         new ForbiddenResponse("You cannot send an invite to yourself").send(
           res
         );
@@ -112,6 +111,10 @@ class InviteController {
     try {
       const { id } = req.user;
       const { receiversId, teamId } = req.body;
+      const teamFull = await isTeamFull(null, teamId);
+      if (teamFull) {
+        new ForbiddenResponse("Team is already full!").send(res);
+      }
       const verifyInvite = await InviteModel.find({
         teamId,
         sentBy: id,
@@ -144,9 +147,8 @@ class InviteController {
       const { teamCode } = req.body;
       const { id } = req.user;
       const teamFull = await isTeamFull(teamCode, null);
-      console.log(teamFull);
       if (teamFull) {
-        throw new Error("Team is already full");
+        new ForbiddenResponse("Team is already full!").send(res);
       }
       let teammateId;
       const teamFromCodeEntered = await TeamModel.findOneAndUpdate(

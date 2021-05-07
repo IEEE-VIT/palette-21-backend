@@ -15,13 +15,14 @@ class DashboardController {
     res: express.Response
   ): Promise<void> => {
     try {
+      const { id, needTeam } = req.user;
       await UserModel.findOneAndUpdate(
         {
-          _id: req.user.id,
-          needTeam: req.user.needTeam,
+          _id: id,
+          needTeam,
         },
         {
-          needTeam: !req.user.needTeam,
+          needTeam: !needTeam,
         },
         { new: true }
       );
@@ -39,6 +40,7 @@ class DashboardController {
     res: express.Response
   ): Promise<void> => {
     try {
+      const { id } = req.user;
       const { name } = req.body;
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
@@ -55,13 +57,13 @@ class DashboardController {
       }
       const size: number = await UserModel.countDocuments({
         name: { $regex: name, $options: "i" },
-        _id: { $ne: req.user.id },
+        _id: { $ne: id },
         needTeam: true,
       });
 
       const users: Array<User> = await UserModel.find({
         name: { $regex: name, $options: "i" },
-        _id: { $ne: req.user.id },
+        _id: { $ne: id },
         needTeam: true,
       })
         .skip(pageNumber)
@@ -81,14 +83,14 @@ class DashboardController {
     res: express.Response
   ): Promise<void> => {
     try {
+      const { id } = req.user;
+      const { name } = req.body;
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
       const skipValue: number = parseInt(skip, 10);
       const limitValue: number = parseInt(limit, 10);
-
       const pageNumber: number = (skipValue - 1) * limitValue;
-      const { name } = req.body;
 
       if (skipValue <= 0) {
         new BadRequestResponse("Enter a valid Page number").send(res);
@@ -98,12 +100,12 @@ class DashboardController {
       }
       const size: number = await TeamModel.countDocuments({
         name: { $regex: name, $options: "i" },
-        users: { $ne: req.user.id },
+        users: { $ne: id },
       });
 
       const teams: Array<Team> = await TeamModel.find({
         name: { $regex: name, $options: "i" },
-        users: { $ne: req.user.id },
+        users: { $ne: id },
       })
         .populate("users")
         .skip(pageNumber)

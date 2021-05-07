@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { InternalErrorResponse, SuccessResponse } from "../core/ApiResponse";
+import {
+  BadRequestResponse,
+  InternalErrorResponse,
+  NotFoundResponse,
+  SuccessResponse,
+} from "../core/ApiResponse";
 import { UserModel } from "../database/models/User";
 
 class UserController {
@@ -8,24 +13,35 @@ class UserController {
       const { id } = req.user;
       const { discordHandle, skills, tools, outreach } = req.body;
       const firstLogin = true;
-      await UserModel.findOneAndUpdate(
+      const user = await UserModel.findOneAndUpdate(
         { _id: id },
         { discordHandle, skills, tools, outreach, firstLogin }
       );
-      new SuccessResponse("Round0 Filled", true).send(res);
+      if (!user) {
+        new NotFoundResponse("User not found!").send(res);
+      }
+      new SuccessResponse(
+        "User details have been filled successfully!",
+        user
+      ).send(res);
     } catch (error) {
       console.log(error);
-      new InternalErrorResponse("Unable to fill round0").send(res);
+      new InternalErrorResponse("Error filling up user details!").send(res);
     }
   };
 
   filledRound0 = async (req: Request, res: Response): Promise<void> => {
     try {
-      const round0 = req.user.firstLogin;
-
-      const teamFormed = !!req.user.teamCode;
-
-      new SuccessResponse("Round0 form", { round0, teamFormed }).send(res);
+      const { firstLogin, teamCode } = req.user;
+      const round0 = firstLogin;
+      if (!round0) {
+        new BadRequestResponse("Unable to fetch user history").send(res);
+      }
+      const teamFormed = !!teamCode;
+      new SuccessResponse("Status of user details", {
+        round0,
+        teamFormed,
+      }).send(res);
     } catch (error) {
       console.log(error);
       new InternalErrorResponse("Unable to fetch filledRound0").send(res);
