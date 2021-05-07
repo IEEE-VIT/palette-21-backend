@@ -7,7 +7,7 @@ const teamController = new TeamController();
 teamRouter.get("/leave", teamController.leaveTeam);
 
 teamRouter.get("/allTeams", teamController.allTeams);
-teamRouter.get("/:code", teamController.fetchTeam);
+teamRouter.get("/myTeam", teamController.fetchTeam);
 teamRouter.post("/create", teamController.createTeam);
 teamRouter.delete("/delete/:code", teamController.deleteTeam);
 teamRouter.put("/update/:code", teamController.updateTeam);
