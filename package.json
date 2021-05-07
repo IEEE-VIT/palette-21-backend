@@ -10,7 +10,8 @@
     "lint": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix",
     "build": "tsc",
     "prepare": "husky install",
-    "pre-commit": "lint-staged"
+    "pre-commit": "lint-staged",
+    "spin-up":"nodemon --watch 'src/**/*.ts' --exec ts-node src/index.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",

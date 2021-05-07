@@ -6,7 +6,7 @@ const dashboard = new DashboardController();
 
 dashboardRouter.get("/findteammates", dashboard.findTeammates);
 dashboardRouter.get("/findteams", dashboard.findTeams);
-dashboardRouter.get("/needteam", dashboard.toggleNeedTeam);
+dashboardRouter.get("/toggleneedteam", dashboard.toggleNeedTeam);
 dashboardRouter.get("/searchusers", dashboard.searchUsers);
 dashboardRouter.get("/searchteams", dashboard.searchTeams);
 dashboardRouter.post("/editteamname", dashboard.editTeamName);

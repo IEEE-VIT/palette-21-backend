@@ -2,14 +2,15 @@ import { Router } from "express";
 
 import passport from "passport";
 import AuthController from "../controllers/auth.controller";
+import { AuthFailureResponse } from "../core/ApiResponse";
 
 const authRouter = Router();
 const authController = new AuthController();
 
 // google auth
 
-authRouter.get("/notgoogle", (req, res) => {
-  res.send("not ok google");
+authRouter.get("/google/error", (req, res) => {
+  new AuthFailureResponse("Unable to sign in using Google").send(res);
 });
 
 authRouter.get(
@@ -21,7 +22,7 @@ authRouter.get(
 
 authRouter.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/auth/notgoogle" }),
+  passport.authenticate("google", { failureRedirect: "/auth/google/error" }),
   authController.googleAuthController
 );
 
