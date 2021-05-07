@@ -9,6 +9,7 @@ import {
 import { InviteModel } from "../database/models/Invite";
 import { TeamModel } from "../database/models/Team";
 import { UserModel } from "../database/models/User";
+import isTeamFull from "../helpers/TeamHelper";
 
 class InviteController {
   sentInvites = async (req: Request, res: Response): Promise<void> => {
@@ -142,6 +143,11 @@ class InviteController {
     try {
       const { teamCode } = req.body;
       const { id } = req.user;
+      const teamFull = await isTeamFull(teamCode, null);
+      console.log(teamFull);
+      if (teamFull) {
+        throw new Error("Team is already full");
+      }
       let teammateId;
       const teamFromCodeEntered = await TeamModel.findOneAndUpdate(
         { teamCode },

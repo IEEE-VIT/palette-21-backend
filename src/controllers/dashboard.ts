@@ -105,6 +105,7 @@ class DashboardController {
         name: { $regex: name, $options: "i" },
         users: { $ne: req.user.id },
       })
+        .populate("users")
         .skip(pageNumber)
         .limit(limitValue);
 
