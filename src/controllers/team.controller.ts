@@ -67,20 +67,54 @@ class TeamController {
 
   leaveTeam = async (req: Request, res: Response): Promise<void> => {
     try {
-      await TeamModel.findOneAndUpdate(
+      shortid.characters(
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@$"
+      );
+      const { id } = req.user;
+      let teamCode: string = shortid.generate().toUpperCase().substring(0, 6);
+
+      const leftTeam = await TeamModel.findOneAndUpdate(
         { teamCode: req.user.teamCode },
         {
           $pull: { users: req.user.id },
         }
-      ).then(async () => {
-        await UserModel.findByIdAndUpdate(req.user.id, {
-          teamCode: "",
-        });
+      );
+      if (!leftTeam) {
+        throw new Error("Error leaving a team");
+      }
+      const updatedUser = await UserModel.findByIdAndUpdate(req.user.id, {
+        teamCode: "",
       });
+      if (!updatedUser) {
+        throw new Error("Error updating the user");
+      }
+      let flag = false;
+      const allRecords = await TeamModel.find({}, { teamCode: 1 });
+      const sameTeamCode = (newTeamCode: string): boolean =>
+        allRecords.some((team) => team.teamCode === newTeamCode);
+      while (!flag) {
+        if (sameTeamCode(teamCode)) {
+          teamCode = shortid.generate().toUpperCase().substring(0, 6);
+        } else {
+          flag = true;
+        }
+      }
+      const userName = req.user.name.split(" ")[0];
+      const newTeamName = `${userName}'s Team`;
 
-      res.send("Left team");
+      await TeamModel.create({
+        name: newTeamName,
+        teamCode,
+        users: [id],
+        invited: [],
+        problemStatement: [],
+        tries: 0,
+      });
+      await UserModel.findOneAndUpdate({ _id: id }, { teamCode, newTeamName });
+      new SuccessResponse("Team left successfully", true).send(res);
     } catch (error) {
       console.log(error);
+      new InternalErrorResponse("Error leaving the team").send(res);
     }
   };
 
