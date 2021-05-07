@@ -54,11 +54,14 @@ class DashboardController {
         needTeam: true,
       });
 
-      const users: Array<User> = await UserModel.find({
-        name: { $regex: name, $options: "i" },
-        _id: { $ne: req.user.id },
-        needTeam: true,
-      })
+      const users: Array<User> = await UserModel.find(
+        {
+          name: { $regex: name, $options: "i" },
+          _id: { $ne: req.user.id },
+          needTeam: true,
+        },
+        "-email -teamCode"
+      )
         .skip(pageNumber)
         .limit(limitValue);
       new SuccessResponse("These users match the search criteria", {
@@ -100,7 +103,7 @@ class DashboardController {
         name: { $regex: name, $options: "i" },
         users: { $ne: req.user.id },
       })
-        .populate("users")
+        .populate("users", "-email -teamCode")
         .skip(pageNumber)
         .limit(limitValue);
 
@@ -142,7 +145,7 @@ class DashboardController {
       const teams: Array<Team> = await TeamModel.find({
         users: { $ne: req.user.id },
       })
-        .populate("users")
+        .populate("users", "-email -teamCode")
         .skip(pageNumber)
         .limit(limitValue);
 

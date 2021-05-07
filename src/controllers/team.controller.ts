@@ -17,7 +17,8 @@ class TeamController {
   fetchTeam = async (req: Request, res: Response): Promise<void> => {
     try {
       const team = await TeamModel.find({ users: req.user.id }).populate(
-        "users"
+        "users",
+        "-email -teamCode"
       );
       res.send(team);
     } catch (error) {
