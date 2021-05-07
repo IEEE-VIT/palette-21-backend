@@ -1,31 +1,38 @@
-import express from "express";
+import { Request, Response } from "express";
+import { startSession } from "mongoose";
 import User, { UserModel } from "../database/models/User";
 import Team, { TeamModel } from "../database/models/Team";
 
 import {
   SuccessResponse,
   InternalErrorResponse,
-  NotFoundResponse,
   BadRequestResponse,
+  NotFoundResponse,
 } from "../core/ApiResponse";
 
 class DashboardController {
-  profile = async (
-    req: express.Request,
-    res: express.Response
-  ): Promise<void> => {
+  profile = async (req: Request, res: Response): Promise<void> => {
     try {
-      const user = await UserModel.findOne(req.user.id);
-      new SuccessResponse("User profile fetched", user).send(res);
+      const { id } = req.user;
+      const user = await UserModel.findById(id, "-firstLogin -outreach -email");
+      const userInTeam = await TeamModel.findOne(
+        { users: id },
+        "-problemStatement -teamCode -tries"
+      ).populate("users", "-firstLogin -teamCode -needTeam -outreach -email");
+      if (!user) {
+        new NotFoundResponse("User not found!").send(res);
+      }
+      new SuccessResponse("User profile fetched", {
+        user,
+        team: userInTeam,
+      }).send(res);
     } catch (error) {
-      new InternalErrorResponse("Not authenticated").send(res);
+      console.log(error);
+      new InternalErrorResponse("Unable to send User profile").send(res);
     }
   };
 
-  toggleNeedTeam = async (
-    req: express.Request,
-    res: express.Response
-  ): Promise<void> => {
+  toggleNeedTeam = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id, needTeam } = req.user;
       await UserModel.findOneAndUpdate(
@@ -35,8 +42,7 @@ class DashboardController {
         },
         {
           needTeam: !needTeam,
-        },
-        { new: true }
+        }
       );
       new SuccessResponse("The user's team status has been updated", true).send(
         res
@@ -47,10 +53,7 @@ class DashboardController {
     }
   };
 
-  searchUsers = async (
-    req: express.Request,
-    res: express.Response
-  ): Promise<void> => {
+  searchUsers = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
       const { name } = req.body;
@@ -93,10 +96,7 @@ class DashboardController {
     }
   };
 
-  searchTeams = async (
-    req: express.Request,
-    res: express.Response
-  ): Promise<void> => {
+  searchTeams = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
       const { name } = req.body;
@@ -136,10 +136,9 @@ class DashboardController {
     }
   };
 
-  editTeamName = async (
-    req: express.Request,
-    res: express.Response
-  ): Promise<void> => {
+  editTeamName = async (req: Request, res: Response): Promise<void> => {
+    const session = await startSession();
+    session.startTransaction();
     try {
       const { id } = req.user;
       const { teamName } = req.body;
@@ -151,17 +150,28 @@ class DashboardController {
           name: teamName,
         },
         { new: true }
-      );
-      if (!updatedTeam) {
-        new NotFoundResponse("No such team found").send(res);
+      ).session(session);
+      console.log(updatedTeam);
+
+      const newUser = await UserModel.findOne({
+        _id: id,
+      }).session(session);
+      console.log(newUser);
+      if (!newUser) {
+        throw new Error("Unable to find User");
       }
-      new SuccessResponse(
-        "The user's team status has been updated",
-        updatedTeam
-      ).send(res);
+
+      await session.commitTransaction();
+      new SuccessResponse("The user's team status has been updated", true).send(
+        res
+      );
     } catch (error) {
+      await session.abortTransaction();
+
       console.log(error);
-      new InternalErrorResponse("Error updating team name").send(res);
+      new InternalErrorResponse(error.message).send(res);
+    } finally {
+      session.endSession();
     }
   };
 }

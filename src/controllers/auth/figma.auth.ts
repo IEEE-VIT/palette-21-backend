@@ -26,13 +26,11 @@ const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
         grant_type: "authorization_code",
       })
       .then((response) => {
-        // console.log(response.data);
         const { data } = response;
         return data.access_token;
         // user_id access_token refresh_token expires_in
       })
       .then((token: string) => {
-        // console.log("token", token);
         axios
           .get("https://api.figma.com/v1/me/", {
             headers: {
@@ -40,7 +38,6 @@ const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
             },
           })
           .then((response) => {
-            // console.log(response.data);
             const { data } = response;
             // id email handle img_url
             user = {
@@ -49,7 +46,6 @@ const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
               imgUrl: data.img_url,
               token,
             };
-            // console.log(user);
             resolve(user);
           })
           .catch((error) => {
@@ -64,8 +60,6 @@ const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
         console.log("error in figma auth:>>", error.response.data);
         reject(error);
       });
-    // console.log(usert);
-    // return usert;
   });
 
 export default figmaAuth;

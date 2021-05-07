@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import {
-  BadRequestResponse,
   InternalErrorResponse,
   NotFoundResponse,
   SuccessResponse,
@@ -15,7 +14,8 @@ class UserController {
       const firstLogin = true;
       const user = await UserModel.findOneAndUpdate(
         { _id: id },
-        { discordHandle, skills, tools, outreach, firstLogin }
+        { discordHandle, skills, tools, outreach, firstLogin },
+        { new: true }
       );
       if (!user) {
         new NotFoundResponse("User not found!").send(res);
@@ -34,9 +34,6 @@ class UserController {
     try {
       const { firstLogin, teamCode } = req.user;
       const round0 = firstLogin;
-      if (!round0) {
-        new BadRequestResponse("Unable to fetch user history").send(res);
-      }
       const teamFormed = !!teamCode;
       new SuccessResponse("Status of user details", {
         round0,
