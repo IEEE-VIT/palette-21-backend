@@ -18,13 +18,12 @@ enum ResponseStatus {
 }
 
 abstract class ApiResponse {
+  // eslint-disable-next-line no-useless-constructor
   constructor(
     protected statusCode: StatusCode,
     protected status: ResponseStatus,
     protected message: string
-  ) {
-    console.log("Response Created");
-  }
+  ) {}
 
   protected prepare<T extends ApiResponse>(
     res: Response,
