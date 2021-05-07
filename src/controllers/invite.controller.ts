@@ -79,6 +79,7 @@ class InviteController {
         }
       );
       const userInTheSameTeam = teamFromCodeEntered.users.some(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (userId: any) => {
           if (!userId.equals(id)) {
             teammateId = userId;
@@ -115,6 +116,20 @@ class InviteController {
     } catch (error) {
       console.error(error);
       new InternalErrorResponse("Unable to join team").send(res);
+    }
+  };
+
+  cancelInvite = async (req: Request, res: Response): Promise<void> => {
+    try {
+      await InviteModel.findOneAndDelete({
+        teamCode: req.user.teamCode,
+        sentBy: req.user.id,
+        sentTo: req.body.userId,
+      });
+      new SuccessResponse("Invite cancelled", true).send(res);
+    } catch (error) {
+      console.error(error);
+      new InternalErrorResponse("Unable to cancel invite").send(res);
     }
   };
 

@@ -10,5 +10,6 @@ dashboardRouter.get("/toggleneedteam", dashboard.toggleNeedTeam);
 dashboardRouter.get("/searchusers", dashboard.searchUsers);
 dashboardRouter.get("/searchteams", dashboard.searchTeams);
 dashboardRouter.post("/editteamname", dashboard.editTeamName);
+dashboardRouter.post("/profile", dashboard.profile);
 
 export default dashboardRouter;
