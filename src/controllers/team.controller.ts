@@ -123,7 +123,7 @@ class TeamController {
   updateTeam = async (req: Request, res: Response): Promise<void> => {
     try {
       const team = await TeamModel.findOneAndUpdate(
-        { teamCode: req.params.code },
+        { users: req.user.id },
         req.body
       );
       res.send(team);
@@ -134,7 +134,7 @@ class TeamController {
 
   deleteTeam = async (req: Request, res: Response): Promise<void> => {
     try {
-      await TeamModel.deleteOne({ teamCode: req.params.code });
+      await TeamModel.deleteOne({ users: req.user.id });
       res.send("Team deleted");
     } catch (error) {
       console.error(error);

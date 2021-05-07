@@ -100,6 +100,7 @@ class DashboardController {
         name: { $regex: name, $options: "i" },
         users: { $ne: req.user.id },
       })
+        .populate("users")
         .skip(pageNumber)
         .limit(limitValue);
 
@@ -141,6 +142,7 @@ class DashboardController {
       const teams: Array<Team> = await TeamModel.find({
         users: { $ne: req.user.id },
       })
+        .populate("users")
         .skip(pageNumber)
         .limit(limitValue);
 
