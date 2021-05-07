@@ -10,6 +10,5 @@ inviteRouter.post("/send", inviteController.sendInvite);
 inviteRouter.post("/rejectInvite", inviteController.rejectInvite);
 inviteRouter.get("/myInvites", inviteController.myInvites);
 inviteRouter.get("/sent/:teamCode", inviteController.sentInvites);
-// inviteRouter.post("/join/:teamCode", inviteController.acceptInvite);
 
 export default inviteRouter;
