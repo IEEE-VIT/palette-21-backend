@@ -2,7 +2,7 @@
 /* eslint-disable max-classes-per-file */
 import { Response } from "express";
 
-enum StatusCode {
+enum success {
   SUCCESS = "true",
   FAILURE = "false",
 }
@@ -20,7 +20,7 @@ enum ResponseStatus {
 abstract class ApiResponse {
   // eslint-disable-next-line no-useless-constructor
   constructor(
-    protected statusCode: StatusCode,
+    protected statusCode: success,
     protected status: ResponseStatus,
     protected message: string
   ) {}
@@ -48,13 +48,13 @@ abstract class ApiResponse {
 
 export class AuthFailureResponse extends ApiResponse {
   constructor(message = "Authentication Failure") {
-    super(StatusCode.FAILURE, ResponseStatus.UNAUTHORIZED, message);
+    super(success.FAILURE, ResponseStatus.UNAUTHORIZED, message);
   }
 }
 
 export class UnprocessableEntry extends ApiResponse {
   constructor(message = "Unprocessable Entry") {
-    super(StatusCode.FAILURE, ResponseStatus.UNPROCESSABLE_ENTRY, message);
+    super(success.FAILURE, ResponseStatus.UNPROCESSABLE_ENTRY, message);
   }
 }
 
@@ -62,7 +62,7 @@ export class NotFoundResponse extends ApiResponse {
   private url: string;
 
   constructor(message = "Not Found") {
-    super(StatusCode.FAILURE, ResponseStatus.NOT_FOUND, message);
+    super(success.FAILURE, ResponseStatus.NOT_FOUND, message);
   }
 
   send(res: Response): Response {
@@ -73,31 +73,31 @@ export class NotFoundResponse extends ApiResponse {
 
 export class ForbiddenResponse extends ApiResponse {
   constructor(message = "Forbidden") {
-    super(StatusCode.FAILURE, ResponseStatus.FORBIDDEN, message);
+    super(success.FAILURE, ResponseStatus.FORBIDDEN, message);
   }
 }
 
 export class BadRequestResponse extends ApiResponse {
   constructor(message = "Bad Parameters") {
-    super(StatusCode.FAILURE, ResponseStatus.BAD_REQUEST, message);
+    super(success.FAILURE, ResponseStatus.BAD_REQUEST, message);
   }
 }
 
 export class InternalErrorResponse extends ApiResponse {
   constructor(message = "Internal Error") {
-    super(StatusCode.FAILURE, ResponseStatus.INTERNAL_ERROR, message);
+    super(success.FAILURE, ResponseStatus.INTERNAL_ERROR, message);
   }
 }
 
 export class FailureMsgResponse extends ApiResponse {
   constructor(message: string) {
-    super(StatusCode.FAILURE, ResponseStatus.SUCCESS, message);
+    super(success.FAILURE, ResponseStatus.SUCCESS, message);
   }
 }
 
 export class SuccessResponse<T> extends ApiResponse {
   constructor(message: string, private data: T) {
-    super(StatusCode.SUCCESS, ResponseStatus.SUCCESS, message);
+    super(success.SUCCESS, ResponseStatus.SUCCESS, message);
   }
 
   send(res: Response): Response {
