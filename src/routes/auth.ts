@@ -29,10 +29,6 @@ authRouter.get(
 
 // figma auth
 
-authRouter.post(
-  "/figma",
-  bodyValidator(schemas.figmaAuth),
-  authController.figmaAuthController
-);
+authRouter.post("/figma", authController.figmaAuthController);
 
 export default authRouter;

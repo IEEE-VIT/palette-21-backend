@@ -14,7 +14,7 @@ class DashboardController {
   searchUsers = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
-      const name = req.query.name as string;
+      const name: string = (req.query.name as string) || "";
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
@@ -57,7 +57,7 @@ class DashboardController {
   searchTeams = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
-      const name = req.query.name as string;
+      const name: string = (req.query.name as string) || "";
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 

@@ -38,7 +38,7 @@ const schemas = {
   searchWithPagination: Joi.object()
     .required()
     .keys({
-      name: Joi.string(),
+      name: Joi.string().allow(""),
       pageNumber: Joi.number().min(1).required(),
       pageSize: Joi.number().min(1).max(10).required(),
     }),
