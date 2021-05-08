@@ -1,8 +1,9 @@
 import { Router } from "express";
-
 import passport from "passport";
 import AuthController from "../controllers/auth.controller";
 import { AuthFailureResponse } from "../core/ApiResponse";
+import schemas from "../middleware/schema";
+import { bodyValidator } from "../middleware/validation";
 
 const authRouter = Router();
 const authController = new AuthController();
@@ -28,6 +29,10 @@ authRouter.get(
 
 // figma auth
 
-authRouter.post("/figma", authController.figmaAuthController);
+authRouter.post(
+  "/figma",
+  bodyValidator(schemas.figmaAuth),
+  authController.figmaAuthController
+);
 
 export default authRouter;

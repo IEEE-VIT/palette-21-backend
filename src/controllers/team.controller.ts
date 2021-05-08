@@ -10,18 +10,6 @@ import {
 } from "../core/ApiResponse";
 
 class TeamController {
-  fetchTeam = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const team = await TeamModel.find({ users: req.user.id }).populate(
-        "users",
-        "-email -teamCode"
-      );
-      res.send(team);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   createTeam = async (req: Request, res: Response): Promise<void> => {
     const session = await startSession();
     session.startTransaction();
