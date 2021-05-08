@@ -5,12 +5,6 @@ const levels = {
   info: 1,
 };
 
-// const level = () => {
-//   const env = process.env.NODE_ENV || "development";
-//   const isDevelopment = env === "development";
-//   return isDevelopment ? "debug" : "warn";
-// };
-
 const colors = {
   error: "red",
   info: "green",
@@ -46,7 +40,3 @@ const Logger = winston.createLogger({
 });
 
 export default Logger;
-
-// route
-// msg
-// user
