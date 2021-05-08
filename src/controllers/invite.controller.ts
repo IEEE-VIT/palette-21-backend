@@ -15,7 +15,7 @@ class InviteController {
   sentInvites = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
-      const invites = await InviteModel.find({ sentBy: id });
+      const invites = await InviteModel.find({ sentBy: id }, "-sentBy");
       if (!invites) {
         new NotFoundResponse("You have not sent any invites yet").send(res);
       }
@@ -38,7 +38,7 @@ class InviteController {
     try {
       const { id } = req.user;
 
-      const invites = await InviteModel.find({ sentTo: id });
+      const invites = await InviteModel.find({ sentTo: id }, "-sentTo");
       if (!invites) {
         new NotFoundResponse("You have not received any invites yet").send(res);
       }
