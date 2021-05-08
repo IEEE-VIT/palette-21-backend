@@ -8,6 +8,7 @@ import {
   InternalErrorResponse,
   SuccessResponse,
 } from "../core/ApiResponse";
+import Logger from "../configs/winston";
 
 class TeamController {
   fetchTeam = async (req: Request, res: Response): Promise<void> => {
@@ -18,7 +19,8 @@ class TeamController {
       );
       res.send(team);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      Logger.error(error);
     }
   };
 
@@ -76,8 +78,9 @@ class TeamController {
         new SuccessResponse("New Team Created", true).send(res);
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       await session.abortTransaction();
+      Logger.error(` ${req.user.email}:>> Error creating team:>> ${error}`);
       new InternalErrorResponse(error.message).send(res);
     } finally {
       session.endSession();
@@ -155,7 +158,8 @@ class TeamController {
       new SuccessResponse("Team left successfully", true).send(res);
     } catch (error) {
       await session.abortTransaction();
-      console.log(error);
+      // console.log(error);
+      Logger.error(` ${req.user.email}:>> Error leaving team:>> ${error}`);
       new InternalErrorResponse(error.message).send(res);
     } finally {
       session.endSession();

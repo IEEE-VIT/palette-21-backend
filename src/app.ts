@@ -1,19 +1,20 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, Response } from "express";
 import passport from "passport";
 import dotenv from "dotenv";
 import connect from "./database/db";
-
 import router from "./routes/index";
 import authRouter from "./routes/auth";
 import { SuccessResponse } from "./core/ApiResponse";
+import Logger from "./configs/winston";
 
 dotenv.config();
 
 require("./controllers/auth/google.auth");
 require("./middleware/auth");
 
-process.on("uncaughtException", (e) => {
-  console.log(e);
+process.on("uncaughtException", (error) => {
+  // console.log(e);
+  Logger.error("Error fetching profile:>>", error);
 });
 
 const app: Application = express();
@@ -27,8 +28,8 @@ const userAuthMiddleware = passport.authenticate("userStrategy", {
 
 connect();
 
-app.get("/", (req: Request, res: Response) => {
-  console.log("Hello Palette");
+app.get("/", (_, res: Response) => {
+  // console.log("Hello Palette");
   new SuccessResponse(
     "Okay Clever person! It's a design hack go hack the designs. Stop viewing our API",
     true

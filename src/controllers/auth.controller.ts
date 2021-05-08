@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
+import Logger from "../configs/winston";
 import { SuccessResponse, AuthFailureResponse } from "../core/ApiResponse";
 import { UserModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
@@ -31,7 +32,8 @@ class AuthController {
         token,
       }).send(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      Logger.error(` Error from figma auth controller:>> ${error}`);
       new AuthFailureResponse(
         "Error logging in through Figma! Please try again"
       ).send(res);
@@ -61,7 +63,9 @@ class AuthController {
         token,
       }).send(res);
     } catch (error) {
-      console.log(error);
+      // console.log("hello", error);
+
+      Logger.error(`Error from google auth controller:>> ${error}`);
       new AuthFailureResponse(
         "Error logging in through Google! Please try again"
       ).send(res);

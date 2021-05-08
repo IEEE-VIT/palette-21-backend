@@ -9,6 +9,7 @@ import {
   BadRequestResponse,
   NotFoundResponse,
 } from "../core/ApiResponse";
+import Logger from "../configs/winston";
 
 class DashboardController {
   profile = async (req: Request, res: Response): Promise<void> => {
@@ -27,7 +28,8 @@ class DashboardController {
         team: userInTeam,
       }).send(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      Logger.error(` ${req.user.email}:>> Error fetching profile:>> ${error}`);
       new InternalErrorResponse("Unable to send User profile").send(res);
     }
   };
@@ -44,11 +46,17 @@ class DashboardController {
           needTeam: !needTeam,
         }
       );
+
       new SuccessResponse("The user's team status has been updated", true).send(
         res
       );
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      Logger.error(
+        ` ${req.user.email}:>> Error toggling need team:>> ${error}`
+      );
+
+      // console.log(req.user.email);
       new InternalErrorResponse("Error finding a team").send(res);
     }
   };
@@ -91,7 +99,9 @@ class DashboardController {
         users,
       }).send(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      Logger.error(` ${req.user.email} :>> Error searching users:>> ${error}`);
+      Logger.error(">>", error.req.user.email, error);
       new InternalErrorResponse("Error searching a user").send(res);
     }
   };
@@ -130,8 +140,11 @@ class DashboardController {
         size,
         teams,
       }).send(res);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      // console.log(error);
+      Logger.error(
+        ` ${req.user.email}:>> Error fetching searched teams:>> ${error}`
+      );
       new InternalErrorResponse("Error searching a team").send(res);
     }
   };
@@ -142,7 +155,7 @@ class DashboardController {
     try {
       const { id } = req.user;
       const { teamName } = req.body;
-      const updatedTeam = await TeamModel.findOneAndUpdate(
+      await TeamModel.findOneAndUpdate(
         {
           users: id,
         },
@@ -151,12 +164,12 @@ class DashboardController {
         },
         { new: true }
       ).session(session);
-      console.log(updatedTeam);
+      // console.log(updatedTeam);
 
       const newUser = await UserModel.findOne({
         _id: id,
       }).session(session);
-      console.log(newUser);
+      // console.log(newUser);
       if (!newUser) {
         throw new Error("Unable to find User");
       }
@@ -167,8 +180,9 @@ class DashboardController {
       );
     } catch (error) {
       await session.abortTransaction();
-
-      console.log(error);
+      Logger.error(">>", error.req.user.email, error);
+      Logger.error(` ${req.user.email}:>> Error editing teamname:>> ${error}`);
+      // console.log(error);
       new InternalErrorResponse(error.message).send(res);
     } finally {
       session.endSession();

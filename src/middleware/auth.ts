@@ -5,6 +5,7 @@
 import jwt from "jsonwebtoken";
 import passport from "passport";
 import { ExtractJwt } from "passport-jwt";
+import Logger from "../configs/winston";
 import { UserModel } from "../database/models/User";
 
 const JwtStrategy = require("passport-jwt").Strategy;
@@ -18,11 +19,12 @@ passport.use(
   "userStrategy",
   new JwtStrategy(opts, async (jwtPayload: any, done: any) => {
     try {
-      console.log(jwtPayload.id);
+      // console.log(jwtPayload.id);
       const user = await UserModel.findById(jwtPayload.id);
       done(null, user);
     } catch (error) {
-      console.log("JWT Middleware error:>>", error);
+      // console.log("JWT Middleware error:>>", error);
+      Logger.error(`JWT middleware error:>> ${error}`);
       done(null, false);
     }
   })
@@ -30,7 +32,7 @@ passport.use(
 
 const generateJwtToken = (payload: object): string => {
   const token = jwt.sign(payload, opts.secretOrKey);
-  console.log("jwt made");
+  // console.log("jwt made");
   return token;
 };
 
