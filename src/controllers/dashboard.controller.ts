@@ -12,59 +12,10 @@ import {
 import Logger from "../configs/winston";
 
 class DashboardController {
-  profile = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { id } = req.user;
-      const user = await UserModel.findById(id, "-firstLogin -outreach -email");
-      const userInTeam = await TeamModel.findOne(
-        { users: id },
-        "-problemStatement -teamCode -tries"
-      ).populate("users", "-firstLogin -teamCode -needTeam -outreach -email");
-      if (!user) {
-        new NotFoundResponse("User not found!").send(res);
-      }
-      new SuccessResponse("User profile fetched", {
-        user,
-        team: userInTeam,
-      }).send(res);
-    } catch (error) {
-      // console.log(error);
-      Logger.error(` ${req.user.email}:>> Error fetching profile:>> ${error}`);
-      new InternalErrorResponse("Unable to send User profile").send(res);
-    }
-  };
-
-  toggleNeedTeam = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { id, needTeam } = req.user;
-      await UserModel.findOneAndUpdate(
-        {
-          _id: id,
-          needTeam,
-        },
-        {
-          needTeam: !needTeam,
-        }
-      );
-
-      new SuccessResponse("The user's team status has been updated", true).send(
-        res
-      );
-    } catch (error) {
-      // console.log(error);
-      Logger.error(
-        ` ${req.user.email}:>> Error toggling need team:>> ${error}`
-      );
-
-      // console.log(req.user.email);
-      new InternalErrorResponse("Error finding a team").send(res);
-    }
-  };
-
   searchUsers = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
-      const { name } = req.body;
+      const name: string = (req.query.name as string) || "";
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
@@ -109,7 +60,7 @@ class DashboardController {
   searchTeams = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
-      const { name } = req.body;
+      const name: string = (req.query.name as string) || "";
       const skip = req.query.pageNumber as string;
       const limit = req.query.pageSize as string;
 
@@ -146,6 +97,30 @@ class DashboardController {
         ` ${req.user.email}:>> Error fetching searched teams:>> ${error}`
       );
       new InternalErrorResponse("Error searching a team").send(res);
+    }
+  };
+
+  toggleNeedTeam = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id, needTeam } = req.user;
+      await UserModel.findOneAndUpdate(
+        {
+          _id: id,
+          needTeam,
+        },
+        {
+          needTeam: !needTeam,
+        }
+      );
+      new SuccessResponse("The user's team status has been updated", true).send(
+        res
+      );
+    } catch (error) {
+      // console.log(error);
+      Logger.error(
+        ` ${req.user.email}:>> Error toggling need team:>> ${error}`
+      );
+      new InternalErrorResponse("Error finding a team").send(res);
     }
   };
 
@@ -186,6 +161,28 @@ class DashboardController {
       new InternalErrorResponse(error.message).send(res);
     } finally {
       session.endSession();
+    }
+  };
+
+  profile = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.user;
+      const user = await UserModel.findById(id, "-firstLogin -outreach -email");
+      const userInTeam = await TeamModel.findOne(
+        { users: id },
+        "-problemStatement -teamCode -tries"
+      ).populate("users", "-firstLogin -teamCode -needTeam -outreach -email");
+      if (!user) {
+        new NotFoundResponse("User not found!").send(res);
+      }
+      new SuccessResponse("User profile fetched", {
+        user,
+        team: userInTeam,
+      }).send(res);
+    } catch (error) {
+      // console.log(error);
+      Logger.error(` ${req.user.email}:>> Error fetching profile:>> ${error}`);
+      new InternalErrorResponse("Unable to send User profile").send(res);
     }
   };
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as dotenv from "dotenv";
 import app from "./app";
 import Logger from "./configs/winston";
@@ -6,8 +7,8 @@ dotenv.config();
 
 declare module "express" {
   export interface Request {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     user?: any;
+    query?: any;
   }
 }
 

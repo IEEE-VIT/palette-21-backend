@@ -309,11 +309,16 @@ class InviteController {
 
   cancelInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      await InviteModel.findOneAndDelete({
-        teamCode: req.user.teamCode,
-        sentBy: req.user.id,
-        sentTo: req.body.userId,
+      const { id, teamCode } = req.user.id;
+      const { receiversId } = req.body;
+      const exisitingInvite = await InviteModel.findOneAndDelete({
+        teamCode,
+        sentBy: id,
+        sentTo: receiversId,
       });
+      if (!exisitingInvite) {
+        throw new Error("Unable to find such an invite");
+      }
       new SuccessResponse("Invite cancelled", true).send(res);
     } catch (error) {
       // console.error(error);

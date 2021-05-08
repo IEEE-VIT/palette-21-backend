@@ -11,19 +11,6 @@ import {
 import Logger from "../configs/winston";
 
 class TeamController {
-  fetchTeam = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const team = await TeamModel.find({ users: req.user.id }).populate(
-        "users",
-        "-email -teamCode"
-      );
-      res.send(team);
-    } catch (error) {
-      // console.error(error);
-      Logger.error(error);
-    }
-  };
-
   createTeam = async (req: Request, res: Response): Promise<void> => {
     const session = await startSession();
     session.startTransaction();
@@ -33,8 +20,11 @@ class TeamController {
       );
 
       const { teamName, needTeam } = req.body;
-      const { id } = req.user;
-      const userTeamCode = req.user.teamCode;
+      const { id, firstLogin } = req.user;
+      if (!firstLogin) {
+        throw new Error("Fill user details first!");
+      }
+      const userTeamCode: string = req.user.teamCode;
       let teamCode: string = shortid.generate().toUpperCase().substring(0, 6);
       if (userTeamCode) {
         new ForbiddenResponse("User Already has a team").send(res);
