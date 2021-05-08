@@ -49,7 +49,7 @@ passport.use(
       profile: Profile,
       done: any
     ) => {
-      console.log("access token: ", typeof accessToken, accessToken);
+      // console.log("access token: ", typeof accessToken, accessToken);
       if (accessToken) {
         const name: string = profile.displayName;
         const email: string = profile.emails[0].value;

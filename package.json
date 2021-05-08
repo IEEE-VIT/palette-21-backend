@@ -45,7 +45,8 @@
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.0",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "winston": "^3.3.3"
   },
   "lint-staged": {
     "*.ts": [

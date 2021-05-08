@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { startSession } from "mongoose";
+import Logger from "../configs/winston";
 import {
   InternalErrorResponse,
   NotFoundResponse,
@@ -23,7 +24,10 @@ class InviteController {
         invites
       ).send(res);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      Logger.error(
+        ` ${req.user.email}:>> Error fetching sent invites:>> ${error}`
+      );
       new InternalErrorResponse("Error fetching the invites you sent").send(
         res
       );
@@ -43,7 +47,12 @@ class InviteController {
         invites
       ).send(res);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+
+      Logger.error(
+        ` ${req.user.email}:>> Error fetching received invites:>> ${error}`
+      );
+
       new InternalErrorResponse(error.message).send(res);
     }
   };
@@ -115,7 +124,8 @@ class InviteController {
       }
       new SuccessResponse("Invite sent succesfully", inviteSent).send(res);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      Logger.error(` ${req.user.email}:>> Error sending invite:>> ${error}`);
       new InternalErrorResponse(error.message).send(res);
     }
   };
@@ -136,7 +146,7 @@ class InviteController {
         sentBy,
         sentTo: id,
       });
-      console.log(verifyInvite);
+      // console.log(verifyInvite);
 
       if (!verifyInvite) {
         throw new Error("No such invite exists!");
@@ -165,7 +175,7 @@ class InviteController {
         const deleteOldTeam = await TeamModel.deleteOne({
           id: teamId,
         }).session(session);
-        console.log(deleteOldTeam);
+        // console.log(deleteOldTeam);
 
         if (!deleteOldTeam) {
           throw new Error("Unable to delete a team");
@@ -190,7 +200,8 @@ class InviteController {
 
       new SuccessResponse("Invite has been accepted", updatedTeam).send(res);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      Logger.error(` ${req.user.email}:>> Error accepting invite:>> ${error}`);
       await session.abortTransaction();
 
       new InternalErrorResponse(error.message).send(res);
@@ -242,13 +253,13 @@ class InviteController {
         throw new Error("User does not have a team");
       }
       const usersInTeam = oldTeam.users;
-      console.log(usersInTeam.length);
+      // console.log(usersInTeam.length);
 
       if (Number(usersInTeam.length) === 1) {
         const deleteOldTeam = await TeamModel.deleteOne({
           teamCode: req.user.teamCode,
         }).session(session);
-        console.log(deleteOldTeam);
+        // console.log(deleteOldTeam);
 
         if (!deleteOldTeam) {
           throw new Error("Unable to delete a team");
@@ -280,7 +291,15 @@ class InviteController {
       await session.commitTransaction();
       new SuccessResponse("User has joined the team", true).send(res);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      Logger.error(
+        "Error joining by team code:>>",
+        error.req.user.email,
+        error
+      );
+      Logger.error(
+        ` ${req.user.email}:>> Error joining by team code:>> ${error}`
+      );
       await session.abortTransaction();
       new InternalErrorResponse(error.message).send(res);
     } finally {
@@ -302,7 +321,8 @@ class InviteController {
       }
       new SuccessResponse("Invite cancelled", true).send(res);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      Logger.error(` ${req.user.email}:>> Error cancelling invite:>> ${error}`);
       new InternalErrorResponse("Unable to cancel invite").send(res);
     }
   };
@@ -320,7 +340,8 @@ class InviteController {
       }
       new SuccessResponse("User has rejected the invite", true).send(res);
     } catch (error) {
-      console.error(error);
+      // console.error(error)
+      Logger.error(` ${req.user.email}:>> Error rejecting invite:>> ${error}`);
       new InternalErrorResponse(error.message).send(res);
     }
   };

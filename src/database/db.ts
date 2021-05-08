@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
+import Logger from "../configs/winston";
 
 dotenv.config();
 const { env } = process;
@@ -23,7 +24,10 @@ const options = {
 // If the Node process ends, close the Mongoose connection
 process.on("SIGINT", () => {
   mongoose.connection.close(() => {
-    console.log(
+    // console.log(
+    //   "Mongoose default connection disconnected through app termination"
+    // );
+    Logger.info(
       "Mongoose default connection disconnected through app termination"
     );
     process.exit(0);
@@ -42,11 +46,13 @@ const connect = (): void => {
   database = mongoose.connection;
 
   database.once("open", async () => {
-    console.log(`Mongoose default connection opened`);
+    // console.log(`Mongoose default connection opened`);
+    Logger.info("Mongoose default connection open");
   });
 
   database.on("error", () => {
-    console.log("Error connecting to database");
+    // console.log("Error connecting to database");
+    Logger.error("Error connecting to DB");
   });
 };
 
@@ -54,9 +60,12 @@ export const disconnect = (): void => {
   if (!database) {
     return;
   }
-  console.log(
+  Logger.info(
     "Mongoose default connection disconnected through app termination"
   );
+  // console.log(
+  //   "Mongoose default connection disconnected through app termination"
+  // );
   mongoose.disconnect();
 };
 

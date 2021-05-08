@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import Logger from "../configs/winston";
 import {
   InternalErrorResponse,
   NotFoundResponse,
@@ -25,7 +26,8 @@ class UserController {
         user
       ).send(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      Logger.error(` ${req.user.email}:>> Error filling round 0:>> ${error}`);
       new InternalErrorResponse("Error filling up user details!").send(res);
     }
   };
@@ -40,7 +42,12 @@ class UserController {
         teamFormed,
       }).send(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+
+      Logger.error(
+        ` ${req.user.email}:>> Error fetching /filledRound0:>> ${error}`
+      );
+
       new InternalErrorResponse("Unable to fetch filledRound0").send(res);
     }
   };

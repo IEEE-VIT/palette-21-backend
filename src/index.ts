@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as dotenv from "dotenv";
 import app from "./app";
+import Logger from "./configs/winston";
 
 dotenv.config();
 
@@ -15,6 +16,9 @@ const port = process.env.PORT || "8000";
 
 app
   .listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    // console.log(`Server running on port ${port}`);
+    Logger.info(`Server running on port ${port}`);
   })
-  .on("error", (e: Error) => console.log(e));
+  .on("error", (error: Error) =>
+    Logger.error("Error fetching profile:>>", error)
+  );
