@@ -292,11 +292,11 @@ class InviteController {
       new SuccessResponse("User has joined the team", true).send(res);
     } catch (error) {
       // console.error(error);
-      Logger.error(
-        "Error joining by team code:>>",
-        error.req.user.email,
-        error
-      );
+      // Logger.error(
+      //   "Error joining by team code:>>",
+      //   error.req.user.email,
+      //   error
+      // );
       Logger.error(
         ` ${req.user.email}:>> Error joining by team code:>> ${error}`
       );
