@@ -41,7 +41,7 @@ class DashboardController {
           _id: { $ne: id },
           needTeam: true,
         },
-        "-firstLogin -teamCode -needTeam -outreach -email"
+        "-firstLogin -teamCode -needTeam -outreach -email -discordHandle"
       )
         .skip(pageNumber)
         .limit(limitValue);
@@ -86,7 +86,10 @@ class DashboardController {
         },
         "-problemStatement -teamCode -tries"
       )
-        .populate("users", "-firstLogin -teamCode -needTeam -outreach -email")
+        .populate(
+          "users",
+          "-firstLogin -teamCode -needTeam -outreach -email -discordHandle"
+        )
         .skip(pageNumber)
         .limit(limitValue);
 
