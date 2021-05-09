@@ -41,7 +41,7 @@ class DashboardController {
           _id: { $ne: id },
           needTeam: true,
         },
-        "-email -teamCode"
+        "-firstLogin -teamCode -needTeam -outreach -email"
       )
         .skip(pageNumber)
         .limit(limitValue);
@@ -79,11 +79,14 @@ class DashboardController {
         users: { $ne: id },
       });
 
-      const teams: Array<Team> = await TeamModel.find({
-        name: { $regex: name, $options: "i" },
-        users: { $ne: id },
-      })
-        .populate("users", "-email -teamCode")
+      const teams: Array<Team> = await TeamModel.find(
+        {
+          name: { $regex: name, $options: "i" },
+          users: { $ne: id },
+        },
+        "-problemStatement -teamCode -tries"
+      )
+        .populate("users", "-firstLogin -teamCode -needTeam -outreach -email")
         .skip(pageNumber)
         .limit(limitValue);
 
