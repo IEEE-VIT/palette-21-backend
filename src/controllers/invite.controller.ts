@@ -59,8 +59,8 @@ class InviteController {
 
   sendInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id } = req.user;
-      const { receiversId, teamId } = req.body;
+      const { id, teamCode } = req.user;
+      const { receiversId } = req.body;
       if (id === receiversId) {
         throw new Error("You cannot send an invite to yourself");
         // new ForbiddenResponse("You cannot send an invite to yourself").send(
@@ -76,9 +76,14 @@ class InviteController {
         throw new Error("User does not need a team");
         // new ForbiddenResponse("User does not need a team").send(res);
       }
-      const team = await TeamModel.findById(teamId);
+      const team = await TeamModel.findOne({ teamCode });
       if (!team) {
         throw new Error("Unable to fetch the given team");
+      }
+      const teamFull = await isTeamFull(null, team.id);
+      if (teamFull) {
+        throw new Error("Team is already full!");
+        // new ForbiddenResponse("Team is already full!").send(res);
       }
 
       const sameInvite = await InviteModel.findOne({
@@ -112,7 +117,7 @@ class InviteController {
       }
 
       const inviteSent = await InviteModel.create({
-        teamId,
+        teamId: team.id,
         sentBy: id,
         sentTo: receiversId,
       });
@@ -134,7 +139,7 @@ class InviteController {
     const session = await startSession();
     session.startTransaction();
     try {
-      const { id } = req.user;
+      const { id, teamCode } = req.user;
       const { sentBy, teamId } = req.body;
       const teamFull = await isTeamFull(null, teamId);
       if (teamFull) {
@@ -173,24 +178,31 @@ class InviteController {
 
       if (Number(usersInTeam.length) === 1) {
         const deleteOldTeam = await TeamModel.deleteOne({
-          id: teamId,
+          teamCode,
         }).session(session);
-        // console.log(deleteOldTeam);
 
         if (!deleteOldTeam) {
           throw new Error("Unable to delete a team");
         }
+        if (!deleteOldTeam.deletedCount) {
+          throw new Error("Unable to delete a team");
+        }
       }
 
-      const updatedTeam = await TeamModel.findByIdAndUpdate(teamId, {
-        $push: { users: id },
-      }).session(session);
+      const updatedTeam = await TeamModel.findByIdAndUpdate(
+        teamId,
+        {
+          $push: { users: id },
+        },
+        { new: true }
+      ).session(session);
       if (!updatedTeam) {
         throw new Error("No such team exists!");
         // new NotFoundResponse("No such team exists").send(res);
       }
       const updatedUser = await UserModel.findByIdAndUpdate(id, {
         teamCode: updatedTeam.teamCode,
+        needTeam: false,
       }).session(session);
       if (!updatedUser) {
         throw new Error("No such user found!");
@@ -309,10 +321,9 @@ class InviteController {
 
   cancelInvite = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id, teamCode } = req.user.id;
+      const { id } = req.user;
       const { receiversId } = req.body;
       const exisitingInvite = await InviteModel.findOneAndDelete({
-        teamCode,
         sentBy: id,
         sentTo: receiversId,
       });

@@ -112,9 +112,10 @@ class DashboardController {
           needTeam: !needTeam,
         }
       );
-      new SuccessResponse("The user's team status has been updated", true).send(
-        res
-      );
+      new SuccessResponse(
+        "The user's team status has been updated",
+        !needTeam
+      ).send(res);
     } catch (error) {
       // console.log(error);
       Logger.error(

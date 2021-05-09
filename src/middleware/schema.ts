@@ -9,7 +9,6 @@ const schemas = {
     teamName: Joi.string().required(),
   }),
   sendInvite: Joi.object().keys({
-    teamId: Joi.string().required(),
     receiversId: Joi.string().required(),
   }),
   acceptInvite: Joi.object().keys({
@@ -23,7 +22,7 @@ const schemas = {
     receiversId: Joi.string().required(),
   }),
   rejectInvite: Joi.object().keys({
-    receiversId: Joi.string().required(),
+    teamId: Joi.string().required(),
   }),
   createTeam: Joi.object().keys({
     teamName: Joi.string().required(),
