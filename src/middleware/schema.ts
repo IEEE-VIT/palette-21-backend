@@ -29,7 +29,9 @@ const schemas = {
     needTeam: Joi.bool().required(),
   }),
   userDetails: Joi.object().keys({
-    discordHandle: Joi.string().required(),
+    discordHandle: Joi.string()
+      .required()
+      .regex(/^\D+#\d{4}$/),
     skills: Joi.array(),
     tools: Joi.array(),
     outreach: Joi.string().required(),

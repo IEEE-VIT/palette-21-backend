@@ -193,6 +193,17 @@ class InviteController {
         if (!deleteOldTeam.deletedCount) {
           throw new Error("Unable to delete a team");
         }
+      } else {
+        const updateOldTeam = await TeamModel.findByIdAndUpdate(
+          teamId,
+          {
+            $pull: { users: id },
+          },
+          { new: true }
+        ).session(session);
+        if (!updateOldTeam) {
+          throw new Error("Unable to update the user's previous team");
+        }
       }
 
       const updatedTeam = await TeamModel.findByIdAndUpdate(
@@ -281,6 +292,17 @@ class InviteController {
 
         if (!deleteOldTeam) {
           throw new Error("Unable to delete a team");
+        }
+      } else {
+        const updateOldTeam = await TeamModel.findByIdAndUpdate(
+          oldTeam.id,
+          {
+            $pull: { users: id },
+          },
+          { new: true }
+        ).session(session);
+        if (!updateOldTeam) {
+          throw new Error("Unable to update the user's previous team");
         }
       }
 
