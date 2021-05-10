@@ -1,10 +1,11 @@
+import { NextFunction, Request, Response } from "express";
 import { UnprocessableEntry } from "../core/ApiResponse";
 import Logger from "../configs/winston";
 
 const bodyValidator = (schema: any) => (
-  req: any,
-  res: any,
-  next: any
+  req: Request,
+  res: Response,
+  next: NextFunction
 ): void => {
   const { error } = schema.validate(req.body);
   const valid = error == null;
@@ -22,9 +23,9 @@ const bodyValidator = (schema: any) => (
 };
 
 const paramValidator = (paramSchema: any) => async (
-  req: any,
-  res: any,
-  next: any
+  req: Request,
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   const { error } = paramSchema.validate(req.query);
   const valid = error == null;

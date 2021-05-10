@@ -43,6 +43,7 @@ class DashboardController {
         },
         "-firstLogin -teamCode -needTeam -outreach -email -discordHandle"
       )
+        .sort({ _id: "-1" })
         .skip(pageNumber)
         .limit(limitValue);
       new SuccessResponse("These users match the search criteria", {
@@ -90,6 +91,7 @@ class DashboardController {
           "users",
           "-firstLogin -teamCode -needTeam -outreach -email -discordHandle"
         )
+        .sort({ _id: "-1" })
         .skip(pageNumber)
         .limit(limitValue);
 
