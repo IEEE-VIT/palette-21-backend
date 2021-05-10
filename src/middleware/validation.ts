@@ -1,7 +1,8 @@
 import { UnprocessableEntry } from "../core/ApiResponse";
+import Logger from "../configs/winston";
 
 const bodyValidator = (schema: any) => (
-  req: Request,
+  req: any,
   res: any,
   next: any
 ): void => {
@@ -12,7 +13,10 @@ const bodyValidator = (schema: any) => (
     next();
   } else {
     const { details } = error;
-    const errorMessages = details.map((i: any) => i.message).join(",");
+    const errorMessages = details
+      .map((i: Record<string, unknown>) => i.message)
+      .join(",");
+    Logger.error(` ${req.user.email}:>> Invalid body sent:>> ${error}`);
     new UnprocessableEntry(errorMessages).send(res);
   }
 };
@@ -28,7 +32,10 @@ const paramValidator = (paramSchema: any) => async (
     next();
   } else {
     const { details } = error;
-    const errorMessages = details.map((i: any) => i.message).join(",");
+    const errorMessages = details
+      .map((i: Record<string, unknown>) => i.message)
+      .join(",");
+    Logger.error(` ${req.user.email}:>> Invalid query params sent:>> ${error}`);
     new UnprocessableEntry(errorMessages).send(res);
   }
 };
