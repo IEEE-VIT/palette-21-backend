@@ -195,7 +195,7 @@ class InviteController {
         }
       } else {
         const updateOldTeam = await TeamModel.findByIdAndUpdate(
-          teamId,
+          oldTeam.id,
           {
             $pull: { users: id },
           },
