@@ -17,7 +17,7 @@ class InviteController {
       const { id } = req.user;
       const invites = await InviteModel.find(
         { sentBy: id },
-        "-sentBy"
+        "-sentBy -status"
       ).populate("sentTo", "name skills tools");
       if (!invites) {
         new NotFoundResponse("You have not sent any invites yet").send(res);
@@ -43,7 +43,7 @@ class InviteController {
 
       const invites = await InviteModel.find(
         { sentTo: id },
-        "-sentTo"
+        "-sentTo -status"
       ).populate("sentBy", "name skills tools");
       if (!invites) {
         new NotFoundResponse("You have not received any invites yet").send(res);
@@ -121,6 +121,7 @@ class InviteController {
         teamId,
         sentBy: id,
         sentTo: receiversId,
+        status: null,
       });
       if (!inviteSent) {
         throw new Error("Error sending an invite to the user");
@@ -197,6 +198,7 @@ class InviteController {
       }
       const updatedUser = await UserModel.findByIdAndUpdate(id, {
         teamCode: updatedTeam.teamCode,
+        status: true,
       }).session(session);
       if (!updatedUser) {
         throw new Error("No such user found!");
@@ -337,18 +339,49 @@ class InviteController {
     try {
       const { teamId } = req.body;
       const { id } = req.user;
-      const deletedInvite = await InviteModel.findOneAndDelete({
-        teamId,
-        sentTo: id,
-      });
-      if (!deletedInvite) {
-        new InternalErrorResponse("Error deleting the invites").send(res);
+      const updatedInvite = await InviteModel.findOneAndUpdate(
+        {
+          teamId,
+          sentTo: id,
+        },
+        { status: false }
+      );
+      if (!updatedInvite) {
+        new InternalErrorResponse("Error updated invite").send(res);
       }
       new SuccessResponse("User has rejected the invite", true).send(res);
     } catch (error) {
       // console.error(error)
       Logger.error(` ${req.user.email}:>> Error rejecting invite:>> ${error}`);
       new InternalErrorResponse(error.message).send(res);
+    }
+  };
+
+  rejectedInvites = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const invites = await InviteModel.find(
+        {
+          sentTo: req.user.id,
+          status: false,
+        },
+        "-status -sentTo"
+      ).populate("sentBy", "name skills tools");
+
+      if (!invites) {
+        new NotFoundResponse("You have not received any invites yet").send(res);
+      } else {
+        new SuccessResponse(
+          "The invites you rejected have been displayed",
+          invites
+        ).send(res);
+      }
+    } catch (error) {
+      Logger.error(
+        ` ${req.user.email}:>> Error fetching rejected invites:>> ${error}`
+      );
+      new InternalErrorResponse("Error fetching the invites you rejected").send(
+        res
+      );
     }
   };
 }
