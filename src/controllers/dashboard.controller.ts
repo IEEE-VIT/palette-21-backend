@@ -43,6 +43,7 @@ class DashboardController {
         },
         "-firstLogin -teamCode -needTeam -outreach -email -discordHandle"
       )
+        .sort({ _id: "-1" })
         .skip(pageNumber)
         .limit(limitValue);
       new SuccessResponse("These users match the search criteria", {
@@ -90,6 +91,7 @@ class DashboardController {
           "users",
           "-firstLogin -teamCode -needTeam -outreach -email -discordHandle"
         )
+        .sort({ _id: "-1" })
         .skip(pageNumber)
         .limit(limitValue);
 
@@ -118,9 +120,10 @@ class DashboardController {
           needTeam: !needTeam,
         }
       );
-      new SuccessResponse("The user's team status has been updated", true).send(
-        res
-      );
+      new SuccessResponse(
+        "The user's team status has been updated",
+        !needTeam
+      ).send(res);
     } catch (error) {
       // console.log(error);
       Logger.error(
