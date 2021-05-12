@@ -7,7 +7,7 @@ export default interface Invite extends Document {
   teamCode: string;
   sentBy: string;
   sentTo: string;
-  status: boolean;
+  status: string;
 }
 
 const schema = new Schema({
@@ -23,7 +23,8 @@ const schema = new Schema({
     ref: "User",
   },
   status: {
-    type: Schema.Types.Boolean,
+    type: Schema.Types.String,
+    default: "pending",
   },
 });
 
