@@ -1,5 +1,5 @@
 import { ObjectId } from "mongoose";
-import { TeamModel } from "../database/models/Team";
+import Team, { TeamModel } from "../database/models/Team";
 
 const isTeamFull = (teamCode: string, teamId: ObjectId): Promise<boolean> =>
   new Promise<boolean>(async (resolve, reject) => {
@@ -9,18 +9,18 @@ const isTeamFull = (teamCode: string, teamId: ObjectId): Promise<boolean> =>
         if (!team) {
           throw new Error("Could not find a team");
         }
-        const usersInTeam = team.users;
+        const usersInTeam: Array<ObjectId> = team.users;
         if (usersInTeam.length >= 2) {
           resolve(true);
         }
         resolve(false);
       }
-      const team = await TeamModel.findById(teamId);
+      const team: Team = await TeamModel.findById(teamId);
 
       if (!team) {
         throw new Error("Could not find a team");
       }
-      const usersInTeam = team.users;
+      const usersInTeam: Array<ObjectId> = team.users;
       if (usersInTeam.length >= 2) {
         resolve(true);
       }

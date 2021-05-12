@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { startSession } from "mongoose";
+import { ClientSession, startSession } from "mongoose";
 import User, { UserModel } from "../database/models/User";
 import Team, { TeamModel } from "../database/models/Team";
 
@@ -16,13 +16,13 @@ class DashboardController {
     try {
       const { id } = req.user;
       const name: string = (req.query.name as string) || "";
-      const skip = req.query.pageNumber as string;
-      const limit = req.query.pageSize as string;
+      const skip: string = req.query.pageNumber;
+      const limit: string = req.query.pageSize;
 
       const skipValue: number = parseInt(skip, 10);
       const limitValue: number = parseInt(limit, 10);
-
       const pageNumber: number = (skipValue - 1) * limitValue;
+
       if (skipValue <= 0) {
         new BadRequestResponse("Enter a valid Page number").send(res);
       }
@@ -62,8 +62,8 @@ class DashboardController {
     try {
       const { id } = req.user;
       const name: string = (req.query.name as string) || "";
-      const skip = req.query.pageNumber as string;
-      const limit = req.query.pageSize as string;
+      const skip: string = req.query.pageNumber;
+      const limit: string = req.query.pageSize;
 
       const skipValue: number = parseInt(skip, 10);
       const limitValue: number = parseInt(limit, 10);
@@ -134,7 +134,7 @@ class DashboardController {
   };
 
   editTeamName = async (req: Request, res: Response): Promise<void> => {
-    const session = await startSession();
+    const session: ClientSession = await startSession();
     session.startTransaction();
     try {
       const { id } = req.user;
@@ -150,7 +150,7 @@ class DashboardController {
       ).session(session);
       // console.log(updatedTeam);
 
-      const newUser = await UserModel.findOne({
+      const newUser: User = await UserModel.findOne({
         _id: id,
       }).session(session);
       // console.log(newUser);
@@ -164,7 +164,6 @@ class DashboardController {
       );
     } catch (error) {
       await session.abortTransaction();
-      Logger.error(">>", error.req.user.email, error);
       Logger.error(` ${req.user.email}:>> Error editing teamname:>> ${error}`);
       // console.log(error);
       new InternalErrorResponse(error.message).send(res);
@@ -176,8 +175,11 @@ class DashboardController {
   profile = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.user;
-      const user = await UserModel.findById(id, "-firstLogin -outreach -email");
-      const userInTeam = await TeamModel.findOne(
+      const user: User = await UserModel.findById(
+        id,
+        "-firstLogin -outreach -email"
+      );
+      const userInTeam: Team = await TeamModel.findOne(
         { users: id },
         "-problemStatement -teamCode -tries"
       ).populate("users", "-firstLogin -teamCode -needTeam -outreach -email");
