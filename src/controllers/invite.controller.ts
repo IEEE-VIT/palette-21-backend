@@ -262,7 +262,9 @@ class InviteController {
       const { id } = req.user;
       const teamFull: boolean = await isTeamFull(teamCode, null);
       if (teamFull) {
-        throw new Error("Team is already full!");
+        throw new Error(
+          "Either team is already full or the team code is incorrect!"
+        );
         // new ForbiddenResponse("Team is already full!").send(res);
       }
       let teammateId;
@@ -273,7 +275,9 @@ class InviteController {
         }
       ).session(session);
       if (!teamFromCodeEntered) {
-        throw new Error("Unable to find a team!");
+        throw new Error(
+          "Either team is already full or the team code is incorrect!"
+        );
         // new NotFoundResponse("Please check the team code again").send(res);
       }
       const userInTheSameTeam: boolean = teamFromCodeEntered.users.some(
@@ -305,7 +309,7 @@ class InviteController {
         // console.log(deleteOldTeam);
 
         if (!deleteOldTeam) {
-          throw new Error("Unable to delete a team");
+          throw new Error("Unable to delete your previous team");
         }
       } else {
         const updateOldTeam: Team = await TeamModel.findByIdAndUpdate(
