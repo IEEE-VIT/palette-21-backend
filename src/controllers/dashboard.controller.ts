@@ -54,7 +54,7 @@ class DashboardController {
       // console.log(error);
       Logger.error(` ${req.user.email} :>> Error searching users:>> ${error}`);
       Logger.error(">>", error.req.user.email, error);
-      new InternalErrorResponse("Error searching a user").send(res);
+      new BadRequestResponse("Error searching a user").send(res);
     }
   };
 
@@ -166,7 +166,7 @@ class DashboardController {
       await session.abortTransaction();
       Logger.error(` ${req.user.email}:>> Error editing teamname:>> ${error}`);
       // console.log(error);
-      new InternalErrorResponse(error.message).send(res);
+      new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
     }
