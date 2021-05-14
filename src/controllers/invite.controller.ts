@@ -297,31 +297,30 @@ class InviteController {
       const oldTeam: Team = await TeamModel.findOne({
         teamCode: req.user.teamCode,
       });
-      if (!oldTeam) {
-        throw new Error("User does not have a team");
-      }
-      const usersInTeam = oldTeam.users;
-      // console.log(usersInTeam.length);
+      if (oldTeam) {
+        const usersInTeam = oldTeam.users;
+        // console.log(usersInTeam.length);
 
-      if (Number(usersInTeam.length) === 1) {
-        const deleteOldTeam = await TeamModel.deleteOne({
-          teamCode: req.user.teamCode,
-        }).session(session);
-        // console.log(deleteOldTeam);
+        if (Number(usersInTeam.length) === 1) {
+          const deleteOldTeam = await TeamModel.deleteOne({
+            teamCode: req.user.teamCode,
+          }).session(session);
+          // console.log(deleteOldTeam);
 
-        if (!deleteOldTeam) {
-          throw new Error("Unable to delete your previous team");
-        }
-      } else {
-        const updateOldTeam: Team = await TeamModel.findByIdAndUpdate(
-          oldTeam.id,
-          {
-            $pull: { users: id },
-          },
-          { new: true }
-        ).session(session);
-        if (!updateOldTeam) {
-          throw new Error("Unable to update the user's previous team");
+          if (!deleteOldTeam) {
+            throw new Error("Unable to delete your previous team");
+          }
+        } else {
+          const updateOldTeam: Team = await TeamModel.findByIdAndUpdate(
+            oldTeam.id,
+            {
+              $pull: { users: id },
+            },
+            { new: true }
+          ).session(session);
+          if (!updateOldTeam) {
+            throw new Error("Unable to update the user's previous team");
+          }
         }
       }
 
