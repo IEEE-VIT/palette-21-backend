@@ -32,9 +32,38 @@ const schemas = {
     discordHandle: Joi.string()
       .required()
       .regex(/^\D+#\d{4}$/),
-    skills: Joi.array(),
-    tools: Joi.array(),
-    outreach: Joi.string().required(),
+    skills: Joi.array()
+      .max(4)
+      .items(
+        Joi.string().valid(
+          "Branding",
+          "Marketing",
+          "VFX",
+          "UI/UX",
+          "Interactive Design",
+          "Visual Design",
+          "Graphic Design"
+        )
+      ),
+    tools: Joi.array()
+      .max(4)
+      .items(
+        Joi.string().valid(
+          "Figma",
+          "Sketch",
+          "Framer",
+          "Adobe XD",
+          "Illustrator",
+          "After Effects",
+          "Webflow",
+          "Protopie",
+          "Invision",
+          "Principle"
+        )
+      ),
+    outreach: Joi.string()
+      .required()
+      .valid("Twitter", "Instagram", "Facebook", "Linkedin"),
   }),
   searchWithPagination: Joi.object()
     .required()
