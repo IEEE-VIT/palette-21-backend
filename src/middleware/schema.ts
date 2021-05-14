@@ -63,7 +63,17 @@ const schemas = {
       ),
     outreach: Joi.string()
       .required()
-      .valid("Twitter", "Instagram", "Facebook", "Linkedin"),
+      .valid(
+        "Twitter",
+        "Instagram",
+        "Facebook",
+        "Linkedin",
+        "Email",
+        "Discord",
+        "Slack",
+        "Reddit",
+        "Word of Mouth"
+      ),
   }),
   searchWithPagination: Joi.object()
     .required()
