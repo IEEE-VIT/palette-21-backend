@@ -1,18 +1,18 @@
 import { Request, Response } from "express";
 import shortid from "shortid";
-import { startSession } from "mongoose";
-import { TeamModel } from "../database/models/Team";
-import { UserModel } from "../database/models/User";
+import { ClientSession, ObjectId, startSession } from "mongoose";
+import Team, { TeamModel } from "../database/models/Team";
+import User, { UserModel } from "../database/models/User";
 import {
+  BadRequestResponse,
   ForbiddenResponse,
-  InternalErrorResponse,
   SuccessResponse,
 } from "../core/ApiResponse";
 import Logger from "../configs/winston";
 
 class TeamController {
   createTeam = async (req: Request, res: Response): Promise<void> => {
-    const session = await startSession();
+    const session: ClientSession = await startSession();
     session.startTransaction();
     try {
       shortid.characters(
@@ -30,7 +30,7 @@ class TeamController {
         new ForbiddenResponse("User Already has a team").send(res);
       } else {
         let flag = false;
-        const allRecords = await TeamModel.find({}, { teamCode: 1 });
+        const allRecords: Team[] = await TeamModel.find({}, { teamCode: 1 });
         const sameTeamCode = (newTeamCode: string): boolean =>
           allRecords.some((team) => team.teamCode === newTeamCode);
         while (!flag) {
@@ -40,7 +40,7 @@ class TeamController {
             flag = true;
           }
         }
-        const newTeam = await TeamModel.create(
+        const newTeam: Team[] = await TeamModel.create(
           [
             {
               name: teamName,
@@ -56,7 +56,7 @@ class TeamController {
           throw new Error("Error creating a new team");
         }
 
-        const updatedUser = await UserModel.findOneAndUpdate(
+        const updatedUser: User = await UserModel.findOneAndUpdate(
           { _id: id },
           { teamCode, needTeam }
         ).session(session);
@@ -70,22 +70,24 @@ class TeamController {
     } catch (error) {
       // console.log(error);
       await session.abortTransaction();
-      Logger.error(` ${req.user.email}:>> Error creating team:>> ${error}`);
-      new InternalErrorResponse(error.message).send(res);
+      Logger.error(`${req.user.email}:>> Error creating team:>> ${error}`);
+      new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
     }
   };
 
   leaveTeam = async (req: Request, res: Response): Promise<void> => {
-    const session = await startSession();
+    const session: ClientSession = await startSession();
     session.startTransaction();
     try {
-      const oldTeam = await TeamModel.findOne({ teamCode: req.user.teamCode });
+      const oldTeam: Team = await TeamModel.findOne({
+        teamCode: req.user.teamCode,
+      });
       if (!oldTeam) {
         throw new Error("Could not find a team");
       }
-      const usersInTeam = oldTeam.users;
+      const usersInTeam: Array<ObjectId> = oldTeam.users;
 
       if (Number(usersInTeam.length) === 1) {
         throw new Error("You cannot leave your own team");
@@ -96,7 +98,7 @@ class TeamController {
       const { id, name } = req.user;
       let teamCode: string = shortid.generate().toUpperCase().substring(0, 6);
 
-      const leftTeam = await TeamModel.findOneAndUpdate(
+      const leftTeam: Team = await TeamModel.findOneAndUpdate(
         { teamCode: req.user.teamCode },
         {
           $pull: { users: id },
@@ -106,7 +108,7 @@ class TeamController {
         throw new Error("User is not a part of the team name!");
         // new NotFoundResponse("User is not a part of the team name").send(res);
       }
-      const updatedUser = await UserModel.findByIdAndUpdate(id, {
+      const updatedUser: User = await UserModel.findByIdAndUpdate(id, {
         teamCode: "",
       }).session(session);
       if (!updatedUser) {
@@ -114,7 +116,7 @@ class TeamController {
         // new NotFoundResponse("User not found to update the team").send(res);
       }
       let flag = false;
-      const allRecords = await TeamModel.find({}, { teamCode: 1 });
+      const allRecords: Team[] = await TeamModel.find({}, { teamCode: 1 });
       const sameTeamCode = (newTeamCode: string): boolean =>
         allRecords.some((team) => team.teamCode === newTeamCode);
       while (!flag) {
@@ -150,7 +152,7 @@ class TeamController {
       await session.abortTransaction();
       // console.log(error);
       Logger.error(` ${req.user.email}:>> Error leaving team:>> ${error}`);
-      new InternalErrorResponse(error.message).send(res);
+      new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
     }

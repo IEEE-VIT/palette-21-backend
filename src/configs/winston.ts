@@ -1,4 +1,5 @@
 import winston from "winston";
+import moment from "moment-timezone";
 
 const levels = {
   error: 0,
@@ -12,8 +13,12 @@ const colors = {
 
 winston.addColors(colors);
 
-const format = winston.format.combine(
-  winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
+moment.tz.setDefault("Asia/Calcutta");
+
+const format: winston.Logform.Format = winston.format.combine(
+  winston.format.timestamp({
+    format: () => moment().format("YYYY-MM-DD HH:mm:ss"),
+  }),
   winston.format.colorize({ all: true }),
   winston.format.printf(
     (info) => `${info.timestamp} ${info.level}: ${info.message}`
@@ -23,7 +28,10 @@ const format = winston.format.combine(
   )
 );
 
-const transports = [
+const transports: (
+  | winston.transports.ConsoleTransportInstance
+  | winston.transports.FileTransportInstance
+)[] = [
   new winston.transports.Console(),
   new winston.transports.File({
     filename: "logs/error.log",
@@ -32,7 +40,7 @@ const transports = [
   new winston.transports.File({ filename: "logs/all.log" }),
 ];
 
-const Logger = winston.createLogger({
+const Logger: winston.Logger = winston.createLogger({
   //   level,
   levels,
   format,

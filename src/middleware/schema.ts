@@ -9,7 +9,6 @@ const schemas = {
     teamName: Joi.string().required(),
   }),
   sendInvite: Joi.object().keys({
-    teamId: Joi.string().required(),
     receiversId: Joi.string().required(),
   }),
   acceptInvite: Joi.object().keys({
@@ -23,17 +22,58 @@ const schemas = {
     receiversId: Joi.string().required(),
   }),
   rejectInvite: Joi.object().keys({
-    receiversId: Joi.string().required(),
+    teamId: Joi.string().required(),
   }),
   createTeam: Joi.object().keys({
     teamName: Joi.string().required(),
     needTeam: Joi.bool().required(),
   }),
   userDetails: Joi.object().keys({
-    discordHandle: Joi.string().required(),
-    skills: Joi.array(),
-    tools: Joi.array(),
-    outreach: Joi.string().required(),
+    discordHandle: Joi.string()
+      .required()
+      .regex(/^\D+#\d{4}$/),
+    skills: Joi.array()
+      .max(4)
+      .items(
+        Joi.string().valid(
+          "Branding",
+          "Marketing",
+          "VFX",
+          "UI/UX",
+          "Interactive Design",
+          "Visual Design",
+          "Graphic Design"
+        )
+      ),
+    tools: Joi.array()
+      .max(4)
+      .items(
+        Joi.string().valid(
+          "Figma",
+          "Sketch",
+          "Framer",
+          "Adobe XD",
+          "Illustrator",
+          "After Effects",
+          "Webflow",
+          "Protopie",
+          "Invision",
+          "Principle"
+        )
+      ),
+    outreach: Joi.string()
+      .required()
+      .valid(
+        "Twitter",
+        "Instagram",
+        "Facebook",
+        "Linkedin",
+        "Email",
+        "Discord",
+        "Slack",
+        "Reddit",
+        "Word of Mouth"
+      ),
   }),
   searchWithPagination: Joi.object()
     .required()

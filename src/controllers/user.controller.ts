@@ -5,7 +5,7 @@ import {
   NotFoundResponse,
   SuccessResponse,
 } from "../core/ApiResponse";
-import { UserModel } from "../database/models/User";
+import User, { UserModel } from "../database/models/User";
 
 class UserController {
   round0 = async (req: Request, res: Response): Promise<void> => {
@@ -13,7 +13,7 @@ class UserController {
       const { id } = req.user;
       const { discordHandle, skills, tools, outreach } = req.body;
       const firstLogin = true;
-      const user = await UserModel.findOneAndUpdate(
+      const user: User = await UserModel.findOneAndUpdate(
         { _id: id },
         { discordHandle, skills, tools, outreach, firstLogin },
         { new: true }

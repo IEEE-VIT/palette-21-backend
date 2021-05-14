@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import Logger from "../configs/winston";
 import { SuccessResponse, AuthFailureResponse } from "../core/ApiResponse";
-import { UserModel } from "../database/models/User";
+import User, { UserModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
 import figmaAuth from "./auth/figma.auth";
 
@@ -12,13 +12,13 @@ class AuthController {
       const { code, redirectUri } = req.body;
       const user = await figmaAuth(code, redirectUri);
       const { name, imgUrl, email } = user;
-      const record = await UserModel.findOne({ email });
+      const record: User = await UserModel.findOne({ email });
       let id: Types.ObjectId;
       if (record) {
         const { _id } = record;
         id = _id;
       } else {
-        const userInDB = await UserModel.create({
+        const userInDB: User = await UserModel.create({
           email,
           userImg: imgUrl,
           name,
@@ -27,7 +27,7 @@ class AuthController {
         id = _id;
       }
       // making jwt
-      const token = generateJwtToken({ id });
+      const token: string = generateJwtToken({ id });
       new SuccessResponse("JWT Token has been created for Figma", {
         token,
       }).send(res);
@@ -43,13 +43,13 @@ class AuthController {
   googleAuthController = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, name, imgUrl } = req.user;
-      const record = await UserModel.findOne({ email });
+      const record: User = await UserModel.findOne({ email });
       let id: Types.ObjectId;
       if (record) {
         const { _id } = record;
         id = _id;
       } else {
-        const userInDB = await UserModel.create({
+        const userInDB: User = await UserModel.create({
           email,
           userImg: imgUrl,
           name,
@@ -58,7 +58,7 @@ class AuthController {
         id = _id;
       }
       // making jwt
-      const token = generateJwtToken({ id });
+      const token: string = generateJwtToken({ id });
       new SuccessResponse("JWT Token has been created for Google", {
         token,
       }).send(res);
