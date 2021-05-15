@@ -4,8 +4,8 @@ import { ClientSession, ObjectId, startSession } from "mongoose";
 import Team, { TeamModel } from "../database/models/Team";
 import User, { UserModel } from "../database/models/User";
 import {
+  BadRequestResponse,
   ForbiddenResponse,
-  InternalErrorResponse,
   SuccessResponse,
 } from "../core/ApiResponse";
 import Logger from "../configs/winston";
@@ -70,8 +70,8 @@ class TeamController {
     } catch (error) {
       // console.log(error);
       await session.abortTransaction();
-      Logger.error(` ${req.user.email}:>> Error creating team:>> ${error}`);
-      new InternalErrorResponse(error.message).send(res);
+      Logger.error(`${req.user.email}:>> Error creating team:>> ${error}`);
+      new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
     }
@@ -152,7 +152,7 @@ class TeamController {
       await session.abortTransaction();
       // console.log(error);
       Logger.error(` ${req.user.email}:>> Error leaving team:>> ${error}`);
-      new InternalErrorResponse(error.message).send(res);
+      new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
     }

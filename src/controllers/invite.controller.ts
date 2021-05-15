@@ -7,6 +7,7 @@ import {
 } from "mongoose";
 import Logger from "../configs/winston";
 import {
+  BadRequestResponse,
   InternalErrorResponse,
   NotFoundResponse,
   SuccessResponse,
@@ -144,7 +145,7 @@ class InviteController {
     } catch (error) {
       // console.error(error);
       Logger.error(` ${req.user.email}:>> Error sending invite:>> ${error}`);
-      new InternalErrorResponse(error.message).send(res);
+      new BadRequestResponse(error.message).send(res);
     }
   };
 
@@ -244,10 +245,10 @@ class InviteController {
       new SuccessResponse("Invite has been accepted", updatedTeam).send(res);
     } catch (error) {
       // console.error(error);
-      Logger.error(` ${req.user.email}:>> Error accepting invite:>> ${error}`);
+      Logger.error(`${req.user.email}:>> Error accepting invite:>> ${error}`);
       await session.abortTransaction();
 
-      new InternalErrorResponse(error.message).send(res);
+      new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
     }
@@ -296,31 +297,30 @@ class InviteController {
       const oldTeam: Team = await TeamModel.findOne({
         teamCode: req.user.teamCode,
       });
-      if (!oldTeam) {
-        throw new Error("User does not have a team");
-      }
-      const usersInTeam = oldTeam.users;
-      // console.log(usersInTeam.length);
+      if (oldTeam) {
+        const usersInTeam = oldTeam.users;
+        // console.log(usersInTeam.length);
 
-      if (Number(usersInTeam.length) === 1) {
-        const deleteOldTeam = await TeamModel.deleteOne({
-          teamCode: req.user.teamCode,
-        }).session(session);
-        // console.log(deleteOldTeam);
+        if (Number(usersInTeam.length) === 1) {
+          const deleteOldTeam = await TeamModel.deleteOne({
+            teamCode: req.user.teamCode,
+          }).session(session);
+          // console.log(deleteOldTeam);
 
-        if (!deleteOldTeam) {
-          throw new Error("Unable to delete your previous team");
-        }
-      } else {
-        const updateOldTeam: Team = await TeamModel.findByIdAndUpdate(
-          oldTeam.id,
-          {
-            $pull: { users: id },
-          },
-          { new: true }
-        ).session(session);
-        if (!updateOldTeam) {
-          throw new Error("Unable to update the user's previous team");
+          if (!deleteOldTeam) {
+            throw new Error("Unable to delete your previous team");
+          }
+        } else {
+          const updateOldTeam: Team = await TeamModel.findByIdAndUpdate(
+            oldTeam.id,
+            {
+              $pull: { users: id },
+            },
+            { new: true }
+          ).session(session);
+          if (!updateOldTeam) {
+            throw new Error("Unable to update the user's previous team");
+          }
         }
       }
 
@@ -363,10 +363,10 @@ class InviteController {
       //   error
       // );
       Logger.error(
-        ` ${req.user.email}:>> Error joining by team code:>> ${error}`
+        `${req.user.email}:>> Error joining by team code:>> ${error}`
       );
       await session.abortTransaction();
-      new InternalErrorResponse(error.message).send(res);
+      new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
     }
@@ -386,8 +386,8 @@ class InviteController {
       new SuccessResponse("Invite cancelled", true).send(res);
     } catch (error) {
       // console.error(error);
-      Logger.error(` ${req.user.email}:>> Error cancelling invite:>> ${error}`);
-      new InternalErrorResponse("Unable to cancel invite").send(res);
+      Logger.error(`${req.user.email}:>> Error cancelling invite:>> ${error}`);
+      new BadRequestResponse("Unable to cancel invite").send(res);
     }
   };
 
@@ -403,12 +403,15 @@ class InviteController {
         { status: "rejected" }
       );
       if (!updatedInvite) {
-        new InternalErrorResponse("Error updated invite").send(res);
+        Logger.error(
+          `${req.user.email}:>> Error rejecting invite:>> No Updated Invites`
+        );
+        new BadRequestResponse("Error updated invite").send(res);
       }
       new SuccessResponse("User has rejected the invite", true).send(res);
     } catch (error) {
       // console.error(error)
-      Logger.error(` ${req.user.email}:>> Error rejecting invite:>> ${error}`);
+      Logger.error(`${req.user.email}:>> Error rejecting invite:>> ${error}`);
       new InternalErrorResponse(error.message).send(res);
     }
   };
