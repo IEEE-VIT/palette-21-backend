@@ -1,5 +1,5 @@
 import * as Joi from "joi";
-import constants from "../configs/constants";
+import constants from "../constants";
 
 const schemas = {
   figmaAuth: Joi.object().keys({

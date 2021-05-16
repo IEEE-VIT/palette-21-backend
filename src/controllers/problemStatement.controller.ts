@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Logger from "../configs/winston";
 import { BadRequestResponse, SuccessResponse } from "../core/ApiResponse";
 import { TeamModel } from "../database/models/Team";
-import constants from "../configs/constants";
+import constants from "../constants";
 
 class ProblemStatement {
   generateProblemStatement = async (
