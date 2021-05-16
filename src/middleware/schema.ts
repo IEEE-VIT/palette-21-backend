@@ -1,4 +1,5 @@
 import * as Joi from "joi";
+import constants from "../configs/constants";
 
 const schemas = {
   figmaAuth: Joi.object().keys({
@@ -36,43 +37,43 @@ const schemas = {
       .max(4)
       .items(
         Joi.string().valid(
-          "Branding",
-          "Marketing",
-          "VFX",
-          "UI/UX",
-          "Interactive Design",
-          "Visual Design",
-          "Graphic Design"
+          constants.branding,
+          constants.marketing,
+          constants.vfx,
+          constants.uiux,
+          constants.interactiveDesign,
+          constants.visualDesign,
+          constants.grpahicsDesign
         )
       ),
     tools: Joi.array()
       .max(4)
       .items(
         Joi.string().valid(
-          "Figma",
-          "Sketch",
-          "Framer",
-          "Adobe XD",
-          "Illustrator",
-          "After Effects",
-          "Webflow",
-          "Protopie",
-          "Invision",
-          "Principle"
+          constants.figma,
+          constants.sketch,
+          constants.framer,
+          constants.adobeXd,
+          constants.illustrator,
+          constants.afterEffects,
+          constants.webflow,
+          constants.protopie,
+          constants.invision,
+          constants.principle
         )
       ),
     outreach: Joi.string()
       .required()
       .valid(
-        "Twitter",
-        "Instagram",
-        "Facebook",
-        "Linkedin",
-        "Email",
-        "Discord",
-        "Slack",
-        "Reddit",
-        "Word of Mouth"
+        constants.twitter,
+        constants.instagram,
+        constants.facebook,
+        constants.linkedin,
+        constants.email,
+        constants.discord,
+        constants.slack,
+        constants.reddit,
+        constants.wordOfMouth
       ),
   }),
   searchWithPagination: Joi.object()

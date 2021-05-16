@@ -181,7 +181,7 @@ class DashboardController {
       );
       const userInTeam: Team = await TeamModel.findOne(
         { users: id },
-        "-problemStatement -teamCode -tries"
+        "-teamCode -tries"
       ).populate("users", "-firstLogin -teamCode -needTeam -outreach -email");
       if (!user) {
         new NotFoundResponse("User not found!").send(res);

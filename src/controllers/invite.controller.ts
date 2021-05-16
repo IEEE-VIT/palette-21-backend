@@ -5,6 +5,7 @@ import {
   startSession,
   UpdateWriteOpResult,
 } from "mongoose";
+import constants from "../configs/constants";
 import Logger from "../configs/winston";
 import {
   BadRequestResponse,
@@ -186,10 +187,10 @@ class InviteController {
           teamId,
           sentBy,
           sentTo: id,
-          status: "pending",
+          status: constants.pendingInvite,
         },
         {
-          status: "accepted",
+          status: constants.acceptedInvite,
         }
       ).session(session);
 
@@ -345,7 +346,7 @@ class InviteController {
       const rejectReceivedInvites: UpdateWriteOpResult = await InviteModel.updateMany(
         { sentTo: id },
         {
-          status: "rejected",
+          status: constants.rejectedInvite,
         }
       ).session(session);
 
@@ -400,7 +401,7 @@ class InviteController {
           teamId,
           sentTo: id,
         },
-        { status: "rejected" }
+        { status: constants.rejectedInvite }
       );
       if (!updatedInvite) {
         Logger.error(
