@@ -1,5 +1,7 @@
 import { Router } from "express";
 import ProblemStatement from "../controllers/problemStatement.controller";
+import schemas from "../middleware/schema";
+import { bodyValidator } from "../middleware/validation";
 
 const problemStatement = new ProblemStatement();
 
@@ -10,6 +12,10 @@ problemStatementRouter.get(
   problemStatement.generateProblemStatement
 );
 
-problemStatementRouter.post("/lock", problemStatement.lockProblemStatement);
+problemStatementRouter.post(
+  "/lock",
+  bodyValidator(schemas.lockProblemStatement),
+  problemStatement.lockProblemStatement
+);
 
 export default problemStatementRouter;
