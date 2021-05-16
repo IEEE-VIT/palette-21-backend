@@ -16,6 +16,7 @@ import Invite, { InviteModel } from "../database/models/Invite";
 import Team, { TeamModel } from "../database/models/Team";
 import User, { UserModel } from "../database/models/User";
 import isTeamFull from "../helpers/TeamHelper";
+import constants from "../constants";
 
 class InviteController {
   sentInvites = async (req: Request, res: Response): Promise<void> => {
@@ -133,7 +134,7 @@ class InviteController {
         teamId: team.id,
         sentBy: id,
         sentTo: receiversId,
-        status: "pending",
+        status: constants.pendingInvite,
       });
       if (!inviteSent) {
         throw new Error("Error sending an invite to the user");
@@ -164,7 +165,7 @@ class InviteController {
         teamId,
         sentBy,
         sentTo: id,
-        status: "pending",
+        status: constants.pendingInvite,
       });
       // console.log(verifyInvite);
 
@@ -186,10 +187,10 @@ class InviteController {
           teamId,
           sentBy,
           sentTo: id,
-          status: "pending",
+          status: constants.pendingInvite,
         },
         {
-          status: "accepted",
+          status: constants.acceptedInvite,
         }
       ).session(session);
 
@@ -345,7 +346,7 @@ class InviteController {
       const rejectReceivedInvites: UpdateWriteOpResult = await InviteModel.updateMany(
         { sentTo: id },
         {
-          status: "rejected",
+          status: constants.rejectedInvite,
         }
       ).session(session);
 
@@ -400,7 +401,7 @@ class InviteController {
           teamId,
           sentTo: id,
         },
-        { status: "rejected" }
+        { status: constants.rejectedInvite }
       );
       if (!updatedInvite) {
         Logger.error(

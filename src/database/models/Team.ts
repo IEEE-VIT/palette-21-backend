@@ -7,7 +7,8 @@ export default interface Team extends Document {
   teamCode: string;
   users: [];
   name: string;
-  problemStatement: [];
+  problemStatement: Array<string>;
+  locked: Array<boolean>;
   tries: number;
 }
 
@@ -27,8 +28,19 @@ const schema = new Schema({
     type: Schema.Types.String,
     required: true,
   },
-  problemStatement: Schema.Types.Array,
-  tries: Schema.Types.Number,
+  problemStatement: {
+    type: Schema.Types.Array,
+    default: [null, null, null],
+  },
+  locked: {
+    type: Schema.Types.Array,
+    default: [false, false, false],
+  },
+
+  tries: {
+    type: Schema.Types.Number,
+    default: 0,
+  },
 });
 
 export const TeamModel = model<Team>(DOCUMENT_NAME, schema, COLLECTION_NAME);
