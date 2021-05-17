@@ -1,4 +1,5 @@
 import express, { Application, Response } from "express";
+import cors from "cors";
 import passport from "passport";
 import dotenv from "dotenv";
 import connect from "./database/db";
@@ -19,6 +20,7 @@ process.on("uncaughtException", (error) => {
 
 const app: Application = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
