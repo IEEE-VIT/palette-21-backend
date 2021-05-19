@@ -11,9 +11,11 @@ export default interface Deadline extends Document {
 const schema = new Schema({
   event: {
     type: Schema.Types.String,
+    required: true,
   },
   time: {
     type: Schema.Types.Date,
+    required: true,
   },
 });
 
