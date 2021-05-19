@@ -15,6 +15,7 @@ export default interface User extends Document {
   invites: [];
   discordHandle: string;
   outreach: string;
+  requestSent: boolean;
 }
 
 const schema = new Schema({
@@ -41,6 +42,10 @@ const schema = new Schema({
   },
   discordHandle: { type: Schema.Types.String, default: "" },
   outreach: { type: Schema.Types.String, default: "" },
+  requestSent: {
+    type: Schema.Types.Boolean,
+    default: false,
+  },
 });
 
 export const UserModel = model<User>(DOCUMENT_NAME, schema, COLLECTION_NAME);

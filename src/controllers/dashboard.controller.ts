@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ClientSession, startSession } from "mongoose";
 import User, { UserModel } from "../database/models/User";
 import Team, { TeamModel } from "../database/models/Team";
+import { InviteModel } from "../database/models/Invite";
 
 import {
   SuccessResponse,
@@ -46,6 +47,24 @@ class DashboardController {
         .sort({ _id: "-1" })
         .skip(pageNumber)
         .limit(limitValue);
+
+      const sentInvites = await InviteModel.find(
+        { sentBy: req.user.id },
+        "sentTo"
+      );
+
+      const sentInvitesUserIds: string[] = [];
+      sentInvites.forEach((invite) => {
+        sentInvitesUserIds.push(invite.sentTo.toString());
+      });
+
+      users.forEach((user) => {
+        if (sentInvitesUserIds.includes(user.id)) {
+          // eslint-disable-next-line no-param-reassign
+          user.requestSent = true;
+        }
+      });
+
       new SuccessResponse("These users match the search criteria", {
         size,
         users,
