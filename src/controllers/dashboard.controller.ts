@@ -10,6 +10,7 @@ import {
   NotFoundResponse,
 } from "../core/ApiResponse";
 import Logger from "../configs/winston";
+import Invite, { InviteModel } from "../database/models/Invite";
 
 class DashboardController {
   searchUsers = async (req: Request, res: Response): Promise<void> => {
@@ -46,14 +47,29 @@ class DashboardController {
         .sort({ _id: "-1" })
         .skip(pageNumber)
         .limit(limitValue);
+
+      const inviteSent = await InviteModel.find(
+        { sentBy: id },
+        "sentTo status"
+      );
+      const usersWithInvites: { user: User; invited: Invite }[] = [];
+
+      users.forEach((user) => {
+        usersWithInvites.push({
+          user,
+          invited: inviteSent.find(
+            (invite) => invite.sentTo.toString() === user.id
+          ),
+        });
+      });
+
       new SuccessResponse("These users match the search criteria", {
         size,
-        users,
+        usersWithInvites,
       }).send(res);
     } catch (error) {
       // console.log(error);
       Logger.error(` ${req.user.email} :>> Error searching users:>> ${error}`);
-      Logger.error(">>", error.req.user.email, error);
       new BadRequestResponse("Error searching a user").send(res);
     }
   };
