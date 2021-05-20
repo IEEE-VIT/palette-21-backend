@@ -12,7 +12,7 @@ export default {
   marketing: "Marketing",
   vfx: "VFX",
   uiux: "UI/UX",
-  interactiveDesign: "Interactive Design",
+  interactiveDesign: "Interaction Design",
   visualDesign: "Visual Design",
   grpahicsDesign: "Graphic Design",
 
