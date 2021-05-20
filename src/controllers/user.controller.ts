@@ -34,10 +34,12 @@ class UserController {
 
   filledRound0 = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { firstLogin, teamCode } = req.user;
+      const { name, userImg, firstLogin, teamCode } = req.user;
       const round0 = firstLogin;
       const teamFormed = !!teamCode;
       new SuccessResponse("Status of user details", {
+        name,
+        userImg,
         round0,
         teamFormed,
       }).send(res);
