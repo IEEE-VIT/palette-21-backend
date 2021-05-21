@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 import Logger from "../configs/winston";
-import { SuccessResponse, AuthFailureResponse } from "../core/ApiResponse";
+import {
+  SuccessResponse,
+  AuthFailureResponse,
+  ForbiddenResponse,
+} from "../core/ApiResponse";
+import { DeadlineModel } from "../database/models/Deadline";
 import User, { UserModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
 import figmaAuth from "./auth/figma.auth";
@@ -18,13 +23,30 @@ class AuthController {
         const { _id } = record;
         id = _id;
       } else {
-        const userInDB: User = await UserModel.create({
-          email,
-          userImg: imgUrl,
-          name,
-        });
-        const { _id } = userInDB;
-        id = _id;
+        const userRegDeadlineTime = (
+          await DeadlineModel.findOne({
+            event: "userReg",
+          })
+        ).time;
+
+        const deadline = new Date() > userRegDeadlineTime;
+
+        // Logger.info(deadline);
+        if (!deadline) {
+          // next();
+          const userInDB: User = await UserModel.create({
+            email,
+            userImg: imgUrl,
+            name,
+          });
+          const { _id } = userInDB;
+          id = _id;
+        } else {
+          new ForbiddenResponse("Deadline for registeration has passed").send(
+            res
+          );
+          return;
+        }
       }
       // making jwt
       const token: string = generateJwtToken({ id });
@@ -49,18 +71,37 @@ class AuthController {
         const { _id } = record;
         id = _id;
       } else {
-        const userInDB: User = await UserModel.create({
-          email,
-          userImg: imgUrl,
-          name,
-        });
-        const { _id } = userInDB;
-        id = _id;
+        const userRegDeadlineTime = (
+          await DeadlineModel.findOne({
+            event: "userReg",
+          })
+        ).time;
+
+        const deadline = new Date() > userRegDeadlineTime;
+
+        // Logger.info(deadline);
+        if (!deadline) {
+          // next();
+          const userInDB: User = await UserModel.create({
+            email,
+            userImg: imgUrl,
+            name,
+          });
+          const { _id } = userInDB;
+          id = _id;
+        } else {
+          res.redirect(
+            `${process.env.FRONTEND_URL}successfulAuth?token=passed&deadline=true`
+          );
+          return;
+        }
       }
       // making jwt
       const token: string = generateJwtToken({ id });
       res.cookie("token", token);
-      res.redirect(`${process.env.FRONTEND_URL}successfulAuth?token=${token}`);
+      res.redirect(
+        `${process.env.FRONTEND_URL}successfulAuth?token=${token}&deadline=false`
+      );
       // new SuccessResponse("JWT Token has been created for Google", {
       //   token,
       // }).send(res);
