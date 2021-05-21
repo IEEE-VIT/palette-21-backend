@@ -83,6 +83,11 @@ const schemas = {
       pageNumber: Joi.number().min(1).required(),
       pageSize: Joi.number().min(1).max(10).required(),
     }),
+  lockProblemStatement: Joi.object().keys({
+    part1: Joi.bool().required(),
+    part2: Joi.bool().required(),
+    part3: Joi.bool().required(),
+  }),
 };
 
 export default schemas;

@@ -1,4 +1,9 @@
 export default {
+  problemStatements: [
+    ["website", "mobile app", "tv app", "fridge app"],
+    ["restaurant", "office", "school", "collegr"],
+    ["aliens", "pets", "birds", "humans"],
+  ],
   pendingInvite: "Pending",
   acceptedInvite: "Accepted",
   rejectedInvite: "Rejected",
@@ -7,7 +12,7 @@ export default {
   marketing: "Marketing",
   vfx: "VFX",
   uiux: "UI/UX",
-  interactiveDesign: "Interactive Design",
+  interactiveDesign: "Interaction Design",
   visualDesign: "Visual Design",
   grpahicsDesign: "Graphic Design",
 

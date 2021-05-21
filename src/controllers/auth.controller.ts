@@ -60,7 +60,7 @@ class AuthController {
       // making jwt
       const token: string = generateJwtToken({ id });
       res.cookie("token", token);
-      res.redirect(process.env.FRONTEND_URL);
+      res.redirect(`${process.env.FRONTEND_URL}successfulAuth?token=${token}`);
       // new SuccessResponse("JWT Token has been created for Google", {
       //   token,
       // }).send(res);

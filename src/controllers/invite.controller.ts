@@ -25,7 +25,7 @@ class InviteController {
       const invites: Invite[] = await InviteModel.find(
         { sentBy: id },
         "-sentBy"
-      ).populate("sentTo", "name skills tools");
+      ).populate("sentTo", "name skills tools userImg");
       if (!invites) {
         new NotFoundResponse("You have not sent any invites yet").send(res);
       }
@@ -51,7 +51,7 @@ class InviteController {
       const invites: Invite[] = await InviteModel.find(
         { sentTo: id },
         "-sentTo"
-      ).populate("sentBy", "name skills tools");
+      ).populate("sentBy", "name skills tools userImg");
       if (!invites) {
         new NotFoundResponse("You have not received any invites yet").send(res);
       }
@@ -343,12 +343,13 @@ class InviteController {
         throw new Error("Teammate not found!");
         // new NotFoundResponse("Teammate not found!").send(res);
       }
-      const rejectReceivedInvites: UpdateWriteOpResult = await InviteModel.updateMany(
-        { sentTo: id },
-        {
-          status: constants.rejectedInvite,
-        }
-      ).session(session);
+      const rejectReceivedInvites: UpdateWriteOpResult =
+        await InviteModel.updateMany(
+          { sentTo: id },
+          {
+            status: constants.rejectedInvite,
+          }
+        ).session(session);
 
       if (!rejectReceivedInvites) {
         throw new Error("Could not reject your received invites!");
