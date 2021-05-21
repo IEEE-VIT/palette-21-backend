@@ -13,5 +13,6 @@ submissionRouter.post(
   submission.createOrEditSubmission
 );
 submissionRouter.get("/my", submission.getSubmission);
+submissionRouter.get("/roundDetail", submission.getCurrentRoundAndDeadline);
 
 export default submissionRouter;
