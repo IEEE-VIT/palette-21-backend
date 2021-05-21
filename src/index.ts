@@ -20,5 +20,5 @@ app
     Logger.info(`Server running on port ${port}`);
   })
   .on("error", (error: Error) =>
-    Logger.error("Error fetching profile:>>", error)
+    Logger.error("Error starting server:>>", error)
   );
