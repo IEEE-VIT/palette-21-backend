@@ -57,35 +57,35 @@ const connect = (): void => {
         {
           event: "userReg",
           time: moment
-            .utc("2021-05-27 18:00:00")
+            .utc("2021-05-27 19:00:00")
             .tz("Asia/Calcutta")
             .format("YYYY-MM-DD HH:mm:ss"),
         },
         {
           event: "teamReg",
           time: moment
-            .utc("2021-05-27 18:00:00")
+            .utc("2021-05-27 22:30:00")
             .tz("Asia/Calcutta")
             .format("YYYY-MM-DD HH:mm:ss"),
         },
         {
           event: "round1",
           time: moment
-            .utc("2021-05-27 18:00:00")
+            .utc("2021-05-28 10:00:00")
             .tz("Asia/Calcutta")
             .format("YYYY-MM-DD HH:mm:ss"),
         },
         {
           event: "round2",
           time: moment
-            .utc("2021-05-27 18:00:00")
+            .utc("2021-05-28 20:00:00")
             .tz("Asia/Calcutta")
             .format("YYYY-MM-DD HH:mm:ss"),
         },
         {
           event: "round3",
           time: moment
-            .utc("2021-05-27 18:00:00")
+            .utc("2021-05-29 15:00:00")
             .tz("Asia/Calcutta")
             .format("YYYY-MM-DD HH:mm:ss"),
         }
