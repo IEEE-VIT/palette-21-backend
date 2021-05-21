@@ -88,6 +88,15 @@ const schemas = {
     part2: Joi.bool().required(),
     part3: Joi.bool().required(),
   }),
+  createOrEditSubmission: Joi.object().keys({
+    title: Joi.string().max(20),
+    description: Joi.string().max(1000),
+    tracks: Joi.array().items(
+      Joi.string().valid(constants.webFlowTrack, constants.bestFreshersTrack)
+    ),
+    submissionLink: Joi.array().items(Joi.string().uri()),
+    images: Joi.array().items(Joi.string().uri()),
+  }),
 };
 
 export default schemas;

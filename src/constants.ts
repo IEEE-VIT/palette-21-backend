@@ -4,6 +4,8 @@ export default {
     ["restaurant", "office", "school", "collegr"],
     ["aliens", "pets", "birds", "humans"],
   ],
+  webFlowTrack: "Webflow",
+  bestFreshersTrack: "Best Freshers",
   pendingInvite: "Pending",
   acceptedInvite: "Accepted",
   rejectedInvite: "Rejected",
