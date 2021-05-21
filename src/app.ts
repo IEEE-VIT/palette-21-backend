@@ -23,7 +23,7 @@ process.on("uncaughtException", (error) => {
 
 const app: Application = express();
 
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
