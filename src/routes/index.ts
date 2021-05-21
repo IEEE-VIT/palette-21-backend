@@ -4,7 +4,7 @@ import inviteRouter from "./invite";
 import dashboardouter from "./dashboard";
 import userRouter from "./user";
 import problemStatementRouter from "./problemStatement";
-import { teamRegDeadline } from "../middleware/deadline";
+import teamRegDeadline from "../middleware/deadline";
 
 const router = Router();
 
