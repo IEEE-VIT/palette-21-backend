@@ -2,11 +2,14 @@ import express, { Application, Response } from "express";
 import cors from "cors";
 import passport from "passport";
 import dotenv from "dotenv";
+
 import connect from "./database/db";
 import router from "./routes/index";
 import authRouter from "./routes/auth";
-import { SuccessResponse } from "./core/ApiResponse";
 import Logger from "./configs/winston";
+
+import { userRegDeadline } from "./middleware/deadline";
+import { SuccessResponse } from "./core/ApiResponse";
 
 dotenv.config();
 
@@ -15,7 +18,7 @@ require("./middleware/auth");
 
 process.on("uncaughtException", (error) => {
   // console.log(e);
-  Logger.error("Error fetching profile:>>", error);
+  Logger.error("Error:>>", error);
 });
 
 const app: Application = express();
@@ -39,6 +42,6 @@ app.get("/", (_, res: Response) => {
 });
 
 app.use("/v1", userAuthMiddleware, router);
-app.use("/auth", authRouter);
+app.use("/auth", userRegDeadline, authRouter);
 
 export default app;
