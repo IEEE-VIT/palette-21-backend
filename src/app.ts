@@ -8,7 +8,6 @@ import router from "./routes/index";
 import authRouter from "./routes/auth";
 import Logger from "./configs/winston";
 
-import { userRegDeadline } from "./middleware/deadline";
 import { SuccessResponse } from "./core/ApiResponse";
 
 dotenv.config();
@@ -42,6 +41,6 @@ app.get("/", (_, res: Response) => {
 });
 
 app.use("/v1", userAuthMiddleware, router);
-app.use("/auth", userRegDeadline, authRouter);
+app.use("/auth", authRouter);
 
 export default app;
