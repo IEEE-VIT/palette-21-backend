@@ -32,7 +32,7 @@ const schemas = {
   userDetails: Joi.object().keys({
     discordHandle: Joi.string()
       .required()
-      .regex(/^\D+#\d{4}$/),
+      .regex(/^.{3,32}#[0-9]{4}$/),
     skills: Joi.array()
       .max(4)
       .items(
