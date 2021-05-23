@@ -7,7 +7,7 @@ const schemas = {
     redirectUri: Joi.string().uri().required(),
   }),
   editTeamName: Joi.object().keys({
-    teamName: Joi.string().required(),
+    teamName: Joi.string().max(15).required(),
   }),
   sendInvite: Joi.object().keys({
     receiversId: Joi.string().required(),
@@ -26,13 +26,13 @@ const schemas = {
     teamId: Joi.string().required(),
   }),
   createTeam: Joi.object().keys({
-    teamName: Joi.string().required(),
+    teamName: Joi.string().max(15).required(),
     needTeam: Joi.bool().required(),
   }),
   userDetails: Joi.object().keys({
     discordHandle: Joi.string()
       .required()
-      .regex(/^\D+#\d{4}$/),
+      .regex(/^.{3,32}#[0-9]{4}$/),
     skills: Joi.array()
       .max(4)
       .items(
