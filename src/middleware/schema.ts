@@ -11,6 +11,7 @@ const schemas = {
   }),
   sendInvite: Joi.object().keys({
     receiversId: Joi.string().required(),
+    token: Joi.string().required(),
   }),
   acceptInvite: Joi.object().keys({
     sentBy: Joi.string().required(),
@@ -18,9 +19,11 @@ const schemas = {
   }),
   joinTeamByCode: Joi.object().keys({
     teamCode: Joi.string().required().length(6),
+    token: Joi.string().required(),
   }),
   cancelInvite: Joi.object().keys({
     receiversId: Joi.string().required(),
+    token: Joi.string().required(),
   }),
   rejectInvite: Joi.object().keys({
     teamId: Joi.string().required(),
