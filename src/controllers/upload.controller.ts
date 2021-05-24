@@ -14,8 +14,6 @@ class imageUpload {
       const fileName = req.file.originalname.split(".");
       const fileType = fileName[fileName.length - 1];
 
-      console.log(req.file);
-
       const params = {
         Bucket: env.AWS_BUCKET_NAME,
         Key: `${Math.random().toString(36).substring(7)}.${fileType}`,
