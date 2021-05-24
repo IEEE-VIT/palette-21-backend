@@ -41,4 +41,12 @@ const paramValidator =
     }
   };
 
-export { bodyValidator, paramValidator };
+const imageValidator = async (req: Request, file, callback): Promise<void> => {
+  // accept image only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    return callback(new Error("Only image files are allowed!"), false);
+  }
+  return callback(null, true);
+};
+
+export { bodyValidator, paramValidator, imageValidator };

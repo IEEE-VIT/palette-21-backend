@@ -7,6 +7,8 @@ export default {
   pendingInvite: "Pending",
   acceptedInvite: "Accepted",
   rejectedInvite: "Rejected",
+  webFlowTrack: "Webflow",
+  bestFreshersTrack: "Best Freshers",
 
   branding: "Branding",
   marketing: "Marketing",

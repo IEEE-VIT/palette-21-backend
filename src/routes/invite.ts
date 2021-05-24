@@ -2,7 +2,6 @@ import { Router } from "express";
 import InviteController from "../controllers/invite.controller";
 import schemas from "../middleware/schema";
 import { bodyValidator } from "../middleware/validation";
-
 import recaptcha from "../middleware/captcha";
 
 const inviteController = new InviteController();

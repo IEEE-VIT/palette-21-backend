@@ -9,7 +9,7 @@ export default interface Submission extends Document {
   title: string;
   description: string;
   tracks: [];
-  videoLink: string;
+  submissionLink: [];
   images: [];
 }
 
@@ -21,7 +21,7 @@ const schema = new Schema({
   title: Schema.Types.String,
   description: Schema.Types.String,
   tracks: Schema.Types.Array,
-  videoLink: Schema.Types.String,
+  submissionLink: Schema.Types.Array,
   images: Schema.Types.Array,
 });
 
