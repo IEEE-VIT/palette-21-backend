@@ -18,4 +18,9 @@ problemStatementRouter.post(
   problemStatement.lockProblemStatement
 );
 
+problemStatementRouter.get(
+  "/getMyProblemStatement",
+  problemStatement.getCurrentProblemStatement
+);
+
 export default problemStatementRouter;
