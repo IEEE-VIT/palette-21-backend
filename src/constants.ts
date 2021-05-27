@@ -2,12 +2,12 @@ export default {
   problemStatements: [
     [
       "a Web App",
-      "A tvOS app",
-      "An Android Auto/Apple Car Play",
-      "A watchOS app",
-      "An iOS app",
-      "An Android app",
-      "A macOS app",
+      "a tvOS app",
+      "an Android Auto/Apple Car Play",
+      "a watchOS app",
+      "an iOS app",
+      "an Android app",
+      "a macOS app",
     ],
     [
       "shopping",

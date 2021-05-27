@@ -15,7 +15,6 @@ class ProblemStatement {
       const userTeam: Team = await TeamModel.findOne({ teamCode });
       const startTime = moment.tz(process.env.pb_stmt_deadline, "Asia/Kolkata");
       const currentTime = moment().tz("Asia/Kolkata");
-      console.log(startTime, currentTime, currentTime < startTime);
 
       if (currentTime < startTime) {
         throw new Error("Hodl Up! We are still generating Problem Statements!");
@@ -116,14 +115,14 @@ class ProblemStatement {
       }
       const newLocked: Array<boolean> = userTeam.locked;
 
-      if (part1 === true) {
-        newLocked[0] = true;
+      if (part1 === true || part1 === false) {
+        newLocked[0] = part1;
       }
-      if (part2 === true) {
-        newLocked[1] = true;
+      if (part2 === true || part2 === false) {
+        newLocked[1] = part2;
       }
-      if (part3 === true) {
-        newLocked[2] = true;
+      if (part3 === true || part3 === false) {
+        newLocked[2] = part3;
       }
       const updatedTeam = await TeamModel.findOneAndUpdate(
         {
