@@ -7,7 +7,7 @@ import {
   AuthFailureResponse,
   ForbiddenResponse,
 } from "../core/ApiResponse";
-import { DeadlineModel } from "../database/models/Deadline";
+// import { DeadlineModel } from "../database/models/Deadline";
 import User, { UserModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
 import figmaAuth from "./auth/figma.auth";
@@ -76,16 +76,21 @@ class AuthController {
         const { _id } = record;
         id = _id;
       } else {
-        const userRegDeadlineTime = (
-          await DeadlineModel.findOne({
-            event: "userReg",
-          })
-        ).time;
+        // const userRegDeadlineTime = (
+        //   await DeadlineModel.findOne({
+        //     event: "userReg",
+        //   })
+        // ).time;
 
-        const deadline = new Date() > userRegDeadlineTime;
+        // const deadline = new Date() > userRegDeadlineTime;
 
+        const deadline = moment.tz(
+          process.env.user_reg_deadline,
+          "Asia/Kolkata"
+        );
+        const currentTime = moment().tz("Asia/Kolkata");
         // Logger.info(deadline);
-        if (!deadline) {
+        if (currentTime < deadline) {
           // next();
           const userInDB: User = await UserModel.create({
             email,
