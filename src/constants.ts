@@ -18,7 +18,7 @@ export default {
       "improving health and fitness",
       "finding recipes",
       "finding jobs",
-      "Improving mental health",
+      "improving mental health",
       "organising a revolution",
     ],
     [
