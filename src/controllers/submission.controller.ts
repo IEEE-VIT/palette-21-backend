@@ -134,10 +134,10 @@ class submission {
         team: userTeam.id,
       });
       if (submissionAlreadyExists) {
-        new SuccessResponse(
-          "Submission has been sent",
-          submissionAlreadyExists
-        ).send(res);
+        new SuccessResponse("Submission has been sent", {
+          submissionAlreadyExists,
+          userTeam,
+        }).send(res);
       } else {
         throw new Error("Create a Submission first");
       }
