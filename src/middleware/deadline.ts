@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
+import moment from "moment-timezone";
 import Logger from "../configs/winston";
 import { BadRequestResponse } from "../core/ApiResponse";
-import { DeadlineModel } from "../database/models/Deadline";
 
 // const userRegDeadline = async (
 //   req: Request,
@@ -35,17 +35,18 @@ const teamRegDeadline = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const teamRegDeadlineTime = (
-      await DeadlineModel.findOne({
-        event: "teamReg",
-      })
-    ).time;
+    // const teamRegDeadlineTime = (
+    //   await DeadlineModel.findOne({
+    //     event: "teamReg",
+    //   })
+    // ).time;
 
     // Logger.info(teamRegDeadlineTime);
+    const deadline = moment.tz(process.env.team_reg_deadline, "Asia/Kolkata");
+    const currentTime = moment().tz("Asia/Kolkata");
+    // const deadline = new Date() > teamRegDeadlineTime;
 
-    const deadline = new Date() > teamRegDeadlineTime;
-
-    if (!deadline) {
+    if (currentTime < deadline) {
       next();
     } else {
       new BadRequestResponse("Deadline for team formation has passed").send(

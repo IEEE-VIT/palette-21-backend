@@ -13,7 +13,7 @@ class ProblemStatement {
     try {
       const { teamCode } = req.user;
       const userTeam: Team = await TeamModel.findOne({ teamCode });
-      const deadline = moment.tz("2021-05-27 23:00", "Asia/Kolkata");
+      const deadline = moment.tz(process.env.pb_stmt_deadline, "Asia/Kolkata");
       const currentTime = moment().tz("Asia/Kolkata");
       if (currentTime > deadline) {
         throw new Error(

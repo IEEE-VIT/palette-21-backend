@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import moment from "moment-timezone";
 import { Types } from "mongoose";
 import Logger from "../configs/winston";
 import {
@@ -23,16 +24,20 @@ class AuthController {
         const { _id } = record;
         id = _id;
       } else {
-        const userRegDeadlineTime = (
-          await DeadlineModel.findOne({
-            event: "userReg",
-          })
-        ).time;
+        // const userRegDeadlineTime = (
+        //   await DeadlineModel.findOne({
+        //     event: "userReg",
+        //   })
+        // ).time;
 
-        const deadline = new Date() > userRegDeadlineTime;
-
+        // const deadline = new Date() > userRegDeadlineTime;
+        const deadline = moment.tz(
+          process.env.user_reg_deadline,
+          "Asia/Kolkata"
+        );
+        const currentTime = moment().tz("Asia/Kolkata");
         // Logger.info(deadline);
-        if (!deadline) {
+        if (currentTime < deadline) {
           // next();
           const userInDB: User = await UserModel.create({
             email,
