@@ -10,7 +10,10 @@ export default interface Submission extends Document {
   description: string;
   tracks: [];
   submissionLink: [];
-  images: [];
+  round1: boolean;
+  round2: boolean;
+  round3: boolean;
+  selectedForRound3: boolean;
 }
 
 const schema = new Schema({
@@ -22,7 +25,22 @@ const schema = new Schema({
   description: Schema.Types.String,
   tracks: Schema.Types.Array,
   submissionLink: Schema.Types.Array,
-  images: Schema.Types.Array,
+  round1: {
+    type: Schema.Types.Boolean,
+    default: false,
+  },
+  round2: {
+    type: Schema.Types.Boolean,
+    default: false,
+  },
+  round3: {
+    type: Schema.Types.Boolean,
+    default: false,
+  },
+  selectedForRound3: {
+    type: Schema.Types.Boolean,
+    default: false,
+  },
 });
 
 export const submsissionModel = model<Submission>(

@@ -92,13 +92,17 @@ const schemas = {
     part3: Joi.bool().required(),
   }),
   createOrEditSubmission: Joi.object().keys({
-    title: Joi.string().max(20),
+    title: Joi.string().max(25).required(),
     description: Joi.string().max(1000),
     tracks: Joi.array().items(
-      Joi.string().valid(constants.webFlowTrack, constants.bestFreshersTrack)
+      Joi.string().valid(
+        constants.graphicDesignTrack,
+        constants.bestPitchTrack,
+        constants.bestFreshersTrack,
+        constants.bestCommunityVotedSolutionTrack
+      )
     ),
-    submissionLink: Joi.array().items(Joi.string().uri()),
-    images: Joi.array().items(Joi.string().uri()),
+    submissionLink: Joi.array().items(Joi.string().uri()).required(),
   }),
 };
 

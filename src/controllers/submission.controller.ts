@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import moment from "moment-timezone";
 import Logger from "../configs/winston";
 import { BadRequestResponse, SuccessResponse } from "../core/ApiResponse";
-import { DeadlineModel } from "../database/models/Deadline";
 import { submsissionModel } from "../database/models/Submission";
 import Team, { TeamModel } from "../database/models/Team";
 
@@ -15,37 +14,101 @@ class submission {
   ): Promise<void> => {
     try {
       const { teamCode } = req.user;
-      const { title, description, tracks, submissionLink, images } = req.body;
+      const { title, description, tracks, submissionLink } = req.body;
       const userTeam: Team = await TeamModel.findOne(
         { teamCode },
         "problemStatement name"
       );
-
+      if (!userTeam) {
+        throw new Error("Please join or create a team to submit!");
+      }
       const submissionAlreadyExists = await submsissionModel.findOne({
         team: userTeam.id,
       });
       let updatedSubmission;
-      if (submissionAlreadyExists) {
-        updatedSubmission = await submsissionModel.findOneAndUpdate(
-          { team: userTeam.id },
-          {
+
+      const currentTime = moment().tz("Asia/Kolkata");
+      const round1Deadline = moment.tz(
+        process.env.round_1_deadline,
+        "Asia/Kolkata"
+      );
+      const round2Deadline = moment.tz(
+        process.env.round_2_deadline,
+        "Asia/Kolkata"
+      );
+      const round3Deadline = moment.tz(
+        process.env.round_3_deadline,
+        "Asia/Kolkata"
+      );
+      if (currentTime < round1Deadline) {
+        if (submissionAlreadyExists) {
+          updatedSubmission = await submsissionModel.findOneAndUpdate(
+            { team: userTeam.id },
+            {
+              title,
+              description,
+              tracks,
+              submissionLink,
+              round1: true,
+            },
+            { new: true }
+          );
+        } else {
+          updatedSubmission = await submsissionModel.create({
+            team: userTeam.id,
             title,
             description,
             tracks,
             submissionLink,
-            images,
-          },
-          { new: true }
-        );
+            round1: true,
+          });
+        }
+      } else if (currentTime > round1Deadline && currentTime < round2Deadline) {
+        if (
+          submissionAlreadyExists &&
+          submissionAlreadyExists.round1 === true
+        ) {
+          updatedSubmission = await submsissionModel.findOneAndUpdate(
+            { team: userTeam.id },
+            {
+              title,
+              description,
+              tracks,
+              submissionLink,
+              round2: true,
+            },
+            { new: true }
+          );
+        } else {
+          throw new Error(
+            "You are not eligible for this round of submission as you did not submit your round 1 progress!"
+          );
+        }
+      } else if (currentTime > round2Deadline && currentTime < round3Deadline) {
+        if (
+          submissionAlreadyExists &&
+          submissionAlreadyExists.round1 === true &&
+          submissionAlreadyExists.round2 === true &&
+          submissionAlreadyExists.selectedForRound3 === true
+        ) {
+          updatedSubmission = await submsissionModel.findOneAndUpdate(
+            { team: userTeam.id },
+            {
+              title,
+              description,
+              tracks,
+              submissionLink,
+              round3: true,
+            },
+            { new: true }
+          );
+        } else {
+          throw new Error(
+            "You are not eligible for this round of submission. Better luck next time!"
+          );
+        }
       } else {
-        updatedSubmission = await submsissionModel.create({
-          team: userTeam.id,
-          title,
-          description,
-          tracks,
-          submissionLink,
-          images,
-        });
+        throw new Error("Submissions have ended!");
       }
       new SuccessResponse(
         "Submission has been updated",
@@ -91,33 +154,39 @@ class submission {
     res: Response
   ): Promise<void> => {
     try {
-      const currentDateAndTime: Date = new Date();
-      const round1Deadline = await DeadlineModel.findOne({ event: "round1" });
-      const round2Deadline = await DeadlineModel.findOne({ event: "round2" });
-      const round3Deadline = await DeadlineModel.findOne({ event: "round3" });
-      let roundNo: number;
-      let deadline: Date;
-      if (
-        round3Deadline.time > currentDateAndTime &&
-        currentDateAndTime > round2Deadline.time
-      ) {
-        roundNo = 3;
-        deadline = round3Deadline.time;
-      } else if (
-        round2Deadline.time > currentDateAndTime &&
-        currentDateAndTime > round1Deadline.time
-      ) {
-        roundNo = 2;
-        deadline = round2Deadline.time;
-      } else if (round1Deadline.time > currentDateAndTime) {
-        roundNo = 1;
-        deadline = round1Deadline.time;
+      const currentTime = moment().tz("Asia/Kolkata");
+      const round1Deadline = moment.tz(
+        process.env.round_1_deadline,
+        "Asia/Kolkata"
+      );
+      const round2Deadline = moment.tz(
+        process.env.round_2_deadline,
+        "Asia/Kolkata"
+      );
+      const round3Deadline = moment.tz(
+        process.env.round_3_deadline,
+        "Asia/Kolkata"
+      );
+      let nextDeadline: string;
+      let currentRoundNo: number;
+
+      if (currentTime < round1Deadline) {
+        nextDeadline = round1Deadline.format();
+        currentRoundNo = 1;
+      } else if (currentTime > round1Deadline && currentTime < round2Deadline) {
+        nextDeadline = round2Deadline.format();
+        currentRoundNo = 2;
+      } else if (currentTime > round2Deadline && currentTime < round3Deadline) {
+        nextDeadline = round3Deadline.format();
+        currentRoundNo = 3;
+      } else {
+        throw new Error("Submissions have ended!");
       }
       new SuccessResponse(
         "Deadline and Round No on submission portal have been sent",
         {
-          roundNo,
-          deadline,
+          currentRoundNo,
+          nextDeadline,
         }
       ).send(res);
     } catch (error) {
