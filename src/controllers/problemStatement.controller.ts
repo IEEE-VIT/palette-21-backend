@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import moment from "moment-timezone";
 import Logger from "../configs/winston";
 import { BadRequestResponse, SuccessResponse } from "../core/ApiResponse";
 import Team, { TeamModel } from "../database/models/Team";
@@ -12,6 +13,14 @@ class ProblemStatement {
     try {
       const { teamCode } = req.user;
       const userTeam: Team = await TeamModel.findOne({ teamCode });
+      const deadline = moment.tz("2021-05-27 23:00", "Asia/Kolkata");
+      const currentTime = moment().tz("Asia/Kolkata");
+      if (currentTime > deadline) {
+        throw new Error(
+          "Please wait until the Problem Statement Generator starts!"
+        );
+      }
+
       if (!userTeam) {
         throw new Error(
           "Join or create a team first to get a Problem Statement"
@@ -31,13 +40,16 @@ class ProblemStatement {
 
       for (let index = 0; index < 3; index += 1) {
         const lockedOneByOne: boolean = userTeam.locked[index];
+        let generator = userTeam.problemStatement[index];
         if (!lockedOneByOne) {
-          const generator: string =
-            constants.problemStatements[index][
-              Math.floor(
-                Math.random() * constants.problemStatements[index].length
-              )
-            ];
+          while (userTeam.problemStatement[index] === generator) {
+            generator =
+              constants.problemStatements[index][
+                Math.floor(
+                  Math.random() * constants.problemStatements[index].length
+                )
+              ];
+          }
           newProblemStatement[index] = generator;
         }
       }
