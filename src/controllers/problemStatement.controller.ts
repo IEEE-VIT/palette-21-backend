@@ -113,6 +113,13 @@ class ProblemStatement {
       ) {
         throw new Error("Please select a Problem Statement to lock!");
       }
+      const { locked } = userTeam;
+      if (locked[0] === true && locked[1] === true && locked[2] === true) {
+        throw new Error(
+          "You have already locked your entire problem statement!"
+        );
+      }
+
       const newLocked: Array<boolean> = userTeam.locked;
 
       if (part1 === true || part1 === false) {
