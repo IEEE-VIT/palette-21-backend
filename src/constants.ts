@@ -3,7 +3,7 @@ export default {
     [
       "a Web App",
       "a tvOS app",
-      "an Android Auto/Apple Car Play",
+      "an Android Auto/Apple CarPlay",
       "a watchOS app",
       "an iOS app",
       "an Android app",
