@@ -13,12 +13,12 @@ class ProblemStatement {
     try {
       const { teamCode } = req.user;
       const userTeam: Team = await TeamModel.findOne({ teamCode });
-      const deadline = moment.tz(process.env.pb_stmt_deadline, "Asia/Kolkata");
+      const startTime = moment.tz(process.env.pb_stmt_deadline, "Asia/Kolkata");
       const currentTime = moment().tz("Asia/Kolkata");
-      if (currentTime > deadline) {
-        throw new Error(
-          "Please wait until the Problem Statement Generator starts!"
-        );
+      console.log(startTime, currentTime, currentTime < startTime);
+
+      if (currentTime < startTime) {
+        throw new Error("Hodl Up! We are still generating Problem Statements!");
       }
 
       if (!userTeam) {
