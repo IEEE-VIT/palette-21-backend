@@ -9,6 +9,7 @@ import {
   SuccessResponse,
 } from "../core/ApiResponse";
 import Logger from "../configs/winston";
+import { InviteModel } from "../database/models/Invite";
 
 class TeamController {
   createTeam = async (req: Request, res: Response): Promise<void> => {
@@ -107,6 +108,11 @@ class TeamController {
         throw new Error("User is not a part of the team name!");
         // new NotFoundResponse("User is not a part of the team name").send(res);
       }
+
+      await InviteModel.deleteMany({
+        teamId: oldTeam.id,
+      }).session(session);
+
       const updatedUser: User = await UserModel.findByIdAndUpdate(id, {
         teamCode: "",
       }).session(session);

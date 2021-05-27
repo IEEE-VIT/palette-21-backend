@@ -10,7 +10,7 @@ const { env } = process;
 
 let database: mongoose.Connection;
 
-const dbURI = `mongodb+srv://${env.DB_USERNAME}:${env.DB_PASSWORD}@cluster0.hgmsb.mongodb.net/${env.DB_NAME}?retryWrites=true&w=majority`;
+const dbURI = env.DB_URI;
 
 const options = {
   useNewUrlParser: true,
@@ -51,51 +51,54 @@ const connect = (): void => {
   database.once("open", async () => {
     // console.log(`Mongoose default connection opened`);
     Logger.info("Mongoose default connection open");
-
-    if (!(await DeadlineModel.exists({ event: "userReg" }))) {
-      DeadlineModel.create(
-        {
-          event: "userReg",
-          time: moment
-            .utc("2021-05-27 19:00:00")
-            .tz("Asia/Calcutta")
-            .format("YYYY-MM-DD HH:mm:ss"),
-        },
-        {
-          event: "teamReg",
-          time: moment
-            .utc("2021-05-27 22:30:00")
-            .tz("Asia/Calcutta")
-            .format("YYYY-MM-DD HH:mm:ss"),
-        },
-        {
-          event: "round1",
-          time: moment
-            .utc("2021-05-28 10:00:00")
-            .tz("Asia/Calcutta")
-            .format("YYYY-MM-DD HH:mm:ss"),
-        },
-        {
-          event: "round2",
-          time: moment
-            .utc("2021-05-28 20:00:00")
-            .tz("Asia/Calcutta")
-            .format("YYYY-MM-DD HH:mm:ss"),
-        },
-        {
-          event: "round3",
-          time: moment
-            .utc("2021-05-29 15:00:00")
-            .tz("Asia/Calcutta")
-            .format("YYYY-MM-DD HH:mm:ss"),
-        }
-      );
+    try {
+      if (!(await DeadlineModel.exists({ event: "userReg" }))) {
+        DeadlineModel.create(
+          {
+            event: "userReg",
+            time: moment
+              .utc("2021-05-27 19:00:00")
+              .tz("Asia/Calcutta")
+              .format("YYYY-MM-DD HH:mm:ss"),
+          },
+          {
+            event: "teamReg",
+            time: moment
+              .utc("2021-05-27 22:30:00")
+              .tz("Asia/Calcutta")
+              .format("YYYY-MM-DD HH:mm:ss"),
+          },
+          {
+            event: "round1",
+            time: moment
+              .utc("2021-05-28 10:00:00")
+              .tz("Asia/Calcutta")
+              .format("YYYY-MM-DD HH:mm:ss"),
+          },
+          {
+            event: "round2",
+            time: moment
+              .utc("2021-05-28 20:00:00")
+              .tz("Asia/Calcutta")
+              .format("YYYY-MM-DD HH:mm:ss"),
+          },
+          {
+            event: "round3",
+            time: moment
+              .utc("2021-05-29 15:00:00")
+              .tz("Asia/Calcutta")
+              .format("YYYY-MM-DD HH:mm:ss"),
+          }
+        );
+      }
+    } catch (error) {
+      Logger.error("Error connecting to DB from try catch:", error);
     }
   });
 
-  database.on("error", () => {
+  database.on("error", (error) => {
     // console.log("Error connecting to database");
-    Logger.error("Error connecting to DB");
+    Logger.error("Error connecting to DB:", error);
   });
 };
 

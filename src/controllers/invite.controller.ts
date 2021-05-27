@@ -241,6 +241,14 @@ class InviteController {
         throw new Error("No such user found!");
         // new NotFoundResponse("No such user found").send(res);
       }
+      const updateTeammate: User = await UserModel.findByIdAndUpdate(sentBy, {
+        needTeam: false,
+      }).session(session);
+      if (!updateTeammate) {
+        throw new Error("Teammate not found!");
+        // new NotFoundResponse("Teammate not found!").send(res);
+      }
+
       await session.commitTransaction();
 
       new SuccessResponse("Invite has been accepted", updatedTeam).send(res);
