@@ -149,7 +149,10 @@ class submission {
       if (currentTime < round1Deadline) {
         eligibilty = true;
       } else if (currentTime > round1Deadline && currentTime < round2Deadline) {
-        if (submissionAlreadyExists.round1 === true) {
+        if (
+          submissionAlreadyExists &&
+          submissionAlreadyExists.round1 === true
+        ) {
           eligibilty = true;
         } else {
           eligibilty = false;
