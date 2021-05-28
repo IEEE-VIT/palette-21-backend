@@ -102,7 +102,7 @@ const schemas = {
         constants.bestCommunityVotedSolutionTrack
       )
     ),
-    submissionLink: Joi.array().items(Joi.string().uri()).required(),
+    submissionLink: Joi.array().required(),
   }),
 };
 
