@@ -129,19 +129,56 @@ class submission {
         { teamCode },
         "problemStatement name"
       );
-
       const submissionAlreadyExists = await submsissionModel.findOne({
         team: userTeam.id,
       });
+      const currentTime = moment().tz("Asia/Kolkata");
+      const round1Deadline = moment.tz(
+        process.env.round_1_deadline,
+        "Asia/Kolkata"
+      );
+      const round2Deadline = moment.tz(
+        process.env.round_2_deadline,
+        "Asia/Kolkata"
+      );
+      const round3Deadline = moment.tz(
+        process.env.round_3_deadline,
+        "Asia/Kolkata"
+      );
+      let eligibilty: boolean;
+      if (currentTime < round1Deadline) {
+        eligibilty = true;
+      } else if (currentTime > round1Deadline && currentTime < round2Deadline) {
+        if (submissionAlreadyExists.round1 === true) {
+          eligibilty = true;
+        } else {
+          eligibilty = false;
+        }
+      } else if (currentTime > round2Deadline && currentTime < round3Deadline) {
+        if (
+          submissionAlreadyExists.round1 === true &&
+          submissionAlreadyExists.round2 === true &&
+          submissionAlreadyExists.selectedForRound3 === true
+        ) {
+          eligibilty = true;
+        } else {
+          eligibilty = false;
+        }
+      } else {
+        throw new Error("Submissions have ended!");
+      }
+
       if (submissionAlreadyExists) {
         new SuccessResponse("Submission has been sent", {
           submissionAlreadyExists,
           userTeam,
+          eligibilty,
         }).send(res);
       } else {
         new SuccessResponse("Submission has been sent", {
           data: null,
           userTeam,
+          eligibilty,
         }).send(res);
       }
     } catch (error) {
