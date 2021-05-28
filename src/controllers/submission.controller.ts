@@ -36,6 +36,10 @@ class submission {
         process.env.round_2_deadline,
         "Asia/Kolkata"
       );
+      const round2ResultDeadline = moment.tz(
+        process.env.round_2_result,
+        "Asia/Kolkata"
+      );
       const round3Deadline = moment.tz(
         process.env.round_3_deadline,
         "Asia/Kolkata"
@@ -86,6 +90,12 @@ class submission {
         }
       } else if (currentTime > round2Deadline && currentTime < round3Deadline) {
         if (
+          submissionAlreadyExists.round1 === true &&
+          submissionAlreadyExists.round2 === true &&
+          currentTime < round2ResultDeadline
+        ) {
+          throw new Error("We are currently reviewing your awesome designs");
+        } else if (
           submissionAlreadyExists &&
           submissionAlreadyExists.round1 === true &&
           submissionAlreadyExists.round2 === true &&
@@ -141,6 +151,10 @@ class submission {
         process.env.round_2_deadline,
         "Asia/Kolkata"
       );
+      const round2ResultDeadline = moment.tz(
+        process.env.round_2_result,
+        "Asia/Kolkata"
+      );
       const round3Deadline = moment.tz(
         process.env.round_3_deadline,
         "Asia/Kolkata"
@@ -159,6 +173,12 @@ class submission {
         }
       } else if (currentTime > round2Deadline && currentTime < round3Deadline) {
         if (
+          submissionAlreadyExists.round1 === true &&
+          submissionAlreadyExists.round2 === true &&
+          currentTime < round2ResultDeadline
+        ) {
+          throw new Error("We are currently reviewing your awesome designs");
+        } else if (
           submissionAlreadyExists.round1 === true &&
           submissionAlreadyExists.round2 === true &&
           submissionAlreadyExists.selectedForRound3 === true
