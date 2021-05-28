@@ -91,6 +91,19 @@ const schemas = {
     part2: Joi.bool().required(),
     part3: Joi.bool().required(),
   }),
+  createOrEditSubmission: Joi.object().keys({
+    title: Joi.string().max(25).required(),
+    description: Joi.string().max(1000),
+    tracks: Joi.array().items(
+      Joi.string().valid(
+        constants.graphicDesignTrack,
+        constants.bestPitchTrack,
+        constants.bestFreshersTrack,
+        constants.bestCommunityVotedSolutionTrack
+      )
+    ),
+    submissionLink: Joi.array().required(),
+  }),
 };
 
 export default schemas;

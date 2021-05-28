@@ -9,21 +9,42 @@ export default interface Submission extends Document {
   title: string;
   description: string;
   tracks: [];
-  videoLink: string;
-  images: [];
+  submissionLink: [];
+  round1: boolean;
+  round2: boolean;
+  round3: boolean;
+  selectedForRound3: boolean;
 }
 
-const schema = new Schema({
-  team: {
-    type: Schema.Types.ObjectId,
-    ref: "Team",
+const schema = new Schema(
+  {
+    team: {
+      type: Schema.Types.ObjectId,
+      ref: "Team",
+    },
+    title: Schema.Types.String,
+    description: Schema.Types.String,
+    tracks: Schema.Types.Array,
+    submissionLink: Schema.Types.Array,
+    round1: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
+    round2: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
+    round3: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
+    selectedForRound3: {
+      type: Schema.Types.Boolean,
+      default: false,
+    },
   },
-  title: Schema.Types.String,
-  description: Schema.Types.String,
-  tracks: Schema.Types.Array,
-  videoLink: Schema.Types.String,
-  images: Schema.Types.Array,
-});
+  { timestamps: true }
+);
 
 export const submsissionModel = model<Submission>(
   DOCUMENT_NAME,
