@@ -139,7 +139,10 @@ class submission {
           userTeam,
         }).send(res);
       } else {
-        throw new Error("Create a Submission first");
+        new SuccessResponse("Submission has been sent", {
+          data: null,
+          userTeam,
+        }).send(res);
       }
     } catch (error) {
       Logger.error(
