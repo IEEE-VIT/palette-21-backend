@@ -26,7 +26,6 @@ class UserController {
         user
       ).send(res);
     } catch (error) {
-      // console.log(error);
       Logger.error(` ${req.user.email}:>> Error filling round 0:>> ${error}`);
       new InternalErrorResponse("Error filling up user details!").send(res);
     }
@@ -44,8 +43,6 @@ class UserController {
         teamFormed,
       }).send(res);
     } catch (error) {
-      // console.log(error);
-
       Logger.error(
         ` ${req.user.email}:>> Error fetching /filledRound0:>> ${error}`
       );

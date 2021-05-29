@@ -106,7 +106,6 @@ class TeamController {
       ).session(session);
       if (!leftTeam) {
         throw new Error("User is not a part of the team name!");
-        // new NotFoundResponse("User is not a part of the team name").send(res);
       }
 
       await InviteModel.deleteMany({
@@ -118,7 +117,6 @@ class TeamController {
       }).session(session);
       if (!updatedUser) {
         throw new Error("User not found to update the team");
-        // new NotFoundResponse("User not found to update the team").send(res);
       }
       let flag = false;
       const allRecords: Team[] = await TeamModel.find({}, { teamCode: 1 });
@@ -154,7 +152,6 @@ class TeamController {
       new SuccessResponse("Team left successfully", true).send(res);
     } catch (error) {
       await session.abortTransaction();
-      // console.log(error);
       Logger.error(` ${req.user.email}:>> Error leaving team:>> ${error}`);
       new BadRequestResponse(error.message).send(res);
     } finally {

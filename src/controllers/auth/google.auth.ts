@@ -27,8 +27,6 @@ interface Profile {
 }
 
 passport.serializeUser((user: object, done: any) => {
-  // console.log("serialize");
-  // console.log("iska user", user);
   done(null, user);
 });
 
@@ -49,7 +47,6 @@ passport.use(
       profile: Profile,
       done: any
     ) => {
-      // console.log("access token: ", typeof accessToken, accessToken);
       if (accessToken) {
         const name: string = profile.displayName;
         const email: string = profile.emails[0].value;

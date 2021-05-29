@@ -49,7 +49,6 @@ const connect = (): void => {
   database = mongoose.connection;
 
   database.once("open", async () => {
-    // console.log(`Mongoose default connection opened`);
     Logger.info("Mongoose default connection open");
     try {
       if (!(await DeadlineModel.exists({ event: "userReg" }))) {
@@ -97,7 +96,6 @@ const connect = (): void => {
   });
 
   database.on("error", (error) => {
-    // console.log("Error connecting to database");
     Logger.error("Error connecting to DB:", error);
   });
 };
@@ -109,9 +107,6 @@ export const disconnect = (): void => {
   Logger.info(
     "Mongoose default connection disconnected through app termination"
   );
-  // console.log(
-  //   "Mongoose default connection disconnected through app termination"
-  // );
   mongoose.disconnect();
 };
 

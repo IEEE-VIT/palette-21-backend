@@ -16,7 +16,6 @@ require("./controllers/auth/google.auth");
 require("./middleware/auth");
 
 process.on("uncaughtException", (error) => {
-  // console.log(e);
   Logger.error("Error:>>", error);
 });
 
@@ -33,7 +32,6 @@ const userAuthMiddleware = passport.authenticate("userStrategy", {
 connect();
 
 app.get("/", (_, res: Response) => {
-  // console.log("Hello Palette");
   new SuccessResponse(
     "Okay Clever person! It's a design hack go hack the designs. Stop viewing our API",
     true
