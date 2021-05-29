@@ -212,8 +212,6 @@ class submission {
     }
   };
 
-  //
-
   getCurrentRoundAndDeadline = async (
     req: Request,
     res: Response

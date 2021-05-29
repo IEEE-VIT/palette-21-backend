@@ -3,7 +3,7 @@ import InviteController from "../controllers/invite.controller";
 import schemas from "../middleware/schema";
 import { bodyValidator } from "../middleware/validation";
 
-// import recaptcha from "../middleware/captcha";
+import recaptcha from "../middleware/captcha";
 
 const inviteController = new InviteController();
 
@@ -13,7 +13,7 @@ inviteRouter.get("/sent", inviteController.sentInvites);
 inviteRouter.get("/received", inviteController.receivedInvites);
 inviteRouter.post(
   "/send",
-  // recaptcha,
+  recaptcha,
   bodyValidator(schemas.sendInvite),
   inviteController.sendInvite
 );
@@ -24,13 +24,13 @@ inviteRouter.post(
 );
 inviteRouter.post(
   "/joinbyCode",
-  // recaptcha,
+  recaptcha,
   bodyValidator(schemas.joinTeamByCode),
   inviteController.joinTeamByCode
 );
 inviteRouter.post(
   "/cancel",
-  // recaptcha,
+  recaptcha,
   bodyValidator(schemas.cancelInvite),
   inviteController.cancelInvite
 );

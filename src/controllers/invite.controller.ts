@@ -34,7 +34,6 @@ class InviteController {
         invites
       ).send(res);
     } catch (error) {
-      // console.error(error);
       Logger.error(
         ` ${req.user.email}:>> Error fetching sent invites:>> ${error}`
       );
@@ -60,8 +59,6 @@ class InviteController {
         invites
       ).send(res);
     } catch (error) {
-      // console.error(error);
-
       Logger.error(
         ` ${req.user.email}:>> Error fetching received invites:>> ${error}`
       );
@@ -76,9 +73,6 @@ class InviteController {
       const { receiversId } = req.body;
       if (id === receiversId) {
         throw new Error("You cannot send an invite to yourself");
-        // new ForbiddenResponse("You cannot send an invite to yourself").send(
-        //   res
-        // );
       }
       const inviteReceiver: User = await UserModel.findById(receiversId);
       if (!inviteReceiver) {
@@ -87,7 +81,6 @@ class InviteController {
 
       if (!inviteReceiver.needTeam) {
         throw new Error("User does not need a team");
-        // new ForbiddenResponse("User does not need a team").send(res);
       }
       const team: Team = await TeamModel.findOne({ teamCode });
       if (!team) {
@@ -96,7 +89,6 @@ class InviteController {
       const teamFull: boolean = await isTeamFull(null, team.id);
       if (teamFull) {
         throw new Error("Team is already full!");
-        // new ForbiddenResponse("Team is already full!").send(res);
       }
 
       const sameInvite: Invite = await InviteModel.findOne({
@@ -105,9 +97,6 @@ class InviteController {
       });
       if (sameInvite) {
         throw new Error("You have already sent this user an invite ");
-        // new ForbiddenResponse("You have already sent this user an invite").send(
-        //   res
-        // );
       }
       const numberOfInvitesByUser: number = await InviteModel.countDocuments({
         sentBy: id,
@@ -116,9 +105,6 @@ class InviteController {
         throw new Error(
           "You have already reached the limit of sending invites! Wait till a user rejects your invite to send more"
         );
-        // new ForbiddenResponse(
-        //   "You have already reached the limit of sending invites! Wait till a user rejects your invite to send more"
-        // ).send(res);
       }
 
       const userIsInTeam: Team = await TeamModel.findOne({
@@ -127,7 +113,6 @@ class InviteController {
       });
       if (!userIsInTeam) {
         throw new Error("Please send an invite from your team");
-        // new ForbiddenResponse("Please send an invite from your team").send(res);
       }
 
       const inviteSent: Invite = await InviteModel.create({
@@ -138,13 +123,9 @@ class InviteController {
       });
       if (!inviteSent) {
         throw new Error("Error sending an invite to the user");
-        // new InternalErrorResponse("Error sending an invite to the user").send(
-        //   res
-        // );
       }
       new SuccessResponse("Invite sent succesfully", inviteSent).send(res);
     } catch (error) {
-      // console.error(error);
       Logger.error(` ${req.user.email}:>> Error sending invite:>> ${error}`);
       new BadRequestResponse(error.message).send(res);
     }
@@ -159,7 +140,6 @@ class InviteController {
       const teamFull: boolean = await isTeamFull(null, teamId);
       if (teamFull) {
         throw new Error("Team is already full!");
-        // new ForbiddenResponse("Team is already full!").send(res);
       }
       const verifyInvite: Invite = await InviteModel.findOne({
         teamId,
@@ -167,11 +147,9 @@ class InviteController {
         sentTo: id,
         status: constants.pendingInvite,
       });
-      // console.log(verifyInvite);
 
       if (!verifyInvite) {
         throw new Error("No such invite exists!");
-        // new NotFoundResponse("No such invite exists").send(res);
       }
       const oldTeam: Team = await TeamModel.findOne({
         teamCode,
@@ -231,7 +209,6 @@ class InviteController {
       ).session(session);
       if (!updatedTeam) {
         throw new Error("No such team exists!");
-        // new NotFoundResponse("No such team exists").send(res);
       }
       const updatedUser: User = await UserModel.findByIdAndUpdate(id, {
         teamCode: updatedTeam.teamCode,
@@ -239,21 +216,18 @@ class InviteController {
       }).session(session);
       if (!updatedUser) {
         throw new Error("No such user found!");
-        // new NotFoundResponse("No such user found").send(res);
       }
       const updateTeammate: User = await UserModel.findByIdAndUpdate(sentBy, {
         needTeam: false,
       }).session(session);
       if (!updateTeammate) {
         throw new Error("Teammate not found!");
-        // new NotFoundResponse("Teammate not found!").send(res);
       }
 
       await session.commitTransaction();
 
       new SuccessResponse("Invite has been accepted", updatedTeam).send(res);
     } catch (error) {
-      // console.error(error);
       Logger.error(`${req.user.email}:>> Error accepting invite:>> ${error}`);
       await session.abortTransaction();
 
@@ -275,7 +249,6 @@ class InviteController {
         throw new Error(
           "Either team is already full or the team code is incorrect!"
         );
-        // new ForbiddenResponse("Team is already full!").send(res);
       }
       let teammateId;
       const teamFromCodeEntered: Team = await TeamModel.findOneAndUpdate(
@@ -288,7 +261,6 @@ class InviteController {
         throw new Error(
           "Either team is already full or the team code is incorrect!"
         );
-        // new NotFoundResponse("Please check the team code again").send(res);
       }
       const userInTheSameTeam: boolean = teamFromCodeEntered.users.some(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -301,20 +273,17 @@ class InviteController {
       );
       if (userInTheSameTeam) {
         throw new Error("User is in the same team!");
-        // new ForbiddenResponse("User is in the same team").send(res);
       }
       const oldTeam: Team = await TeamModel.findOne({
         teamCode: req.user.teamCode,
       });
       if (oldTeam) {
         const usersInTeam = oldTeam.users;
-        // console.log(usersInTeam.length);
 
         if (Number(usersInTeam.length) === 1) {
           const deleteOldTeam = await TeamModel.deleteOne({
             teamCode: req.user.teamCode,
           }).session(session);
-          // console.log(deleteOldTeam);
 
           if (!deleteOldTeam) {
             throw new Error("Unable to delete your previous team");
@@ -339,7 +308,6 @@ class InviteController {
       }).session(session);
       if (!updateJoiningUser) {
         throw new Error("User not found!");
-        // new NotFoundResponse("User not found!").send(res);
       }
       const updateTeammate: User = await UserModel.findByIdAndUpdate(
         teammateId,
@@ -349,28 +317,21 @@ class InviteController {
       ).session(session);
       if (!updateTeammate) {
         throw new Error("Teammate not found!");
-        // new NotFoundResponse("Teammate not found!").send(res);
       }
-      const rejectReceivedInvites: UpdateWriteOpResult = await InviteModel.updateMany(
-        { sentTo: id },
-        {
-          status: constants.rejectedInvite,
-        }
-      ).session(session);
+      const rejectReceivedInvites: UpdateWriteOpResult =
+        await InviteModel.updateMany(
+          { sentTo: id },
+          {
+            status: constants.rejectedInvite,
+          }
+        ).session(session);
 
       if (!rejectReceivedInvites) {
         throw new Error("Could not reject your received invites!");
-        // new InternalErrorResponse("Could not delete invites").send(res);
       }
       await session.commitTransaction();
       new SuccessResponse("User has joined the team", true).send(res);
     } catch (error) {
-      // console.error(error);
-      // Logger.error(
-      //   "Error joining by team code:>>",
-      //   error.req.user.email,
-      //   error
-      // );
       Logger.error(
         `${req.user.email}:>> Error joining by team code:>> ${error}`
       );
@@ -394,7 +355,6 @@ class InviteController {
       }
       new SuccessResponse("Invite cancelled", true).send(res);
     } catch (error) {
-      // console.error(error);
       Logger.error(`${req.user.email}:>> Error cancelling invite:>> ${error}`);
       new BadRequestResponse("Unable to cancel invite").send(res);
     }
@@ -419,7 +379,6 @@ class InviteController {
       }
       new SuccessResponse("User has rejected the invite", true).send(res);
     } catch (error) {
-      // console.error(error)
       Logger.error(`${req.user.email}:>> Error rejecting invite:>> ${error}`);
       new InternalErrorResponse(error.message).send(res);
     }

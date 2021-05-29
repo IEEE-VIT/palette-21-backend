@@ -68,7 +68,6 @@ class DashboardController {
         usersWithInvites,
       }).send(res);
     } catch (error) {
-      // console.log(error);
       Logger.error(` ${req.user.email} :>> Error searching users:>> ${error}`);
       new BadRequestResponse("Error searching a user").send(res);
     }
@@ -116,7 +115,6 @@ class DashboardController {
         teams,
       }).send(res);
     } catch (error) {
-      // console.log(error);
       Logger.error(
         ` ${req.user.email}:>> Error fetching searched teams:>> ${error}`
       );
@@ -141,7 +139,6 @@ class DashboardController {
         !needTeam
       ).send(res);
     } catch (error) {
-      // console.log(error);
       Logger.error(
         ` ${req.user.email}:>> Error toggling need team:>> ${error}`
       );
@@ -164,12 +161,10 @@ class DashboardController {
         },
         { new: true }
       ).session(session);
-      // console.log(updatedTeam);
 
       const newUser: User = await UserModel.findOne({
         _id: id,
       }).session(session);
-      // console.log(newUser);
       if (!newUser) {
         throw new Error("Unable to find User");
       }
@@ -181,7 +176,6 @@ class DashboardController {
     } catch (error) {
       await session.abortTransaction();
       Logger.error(` ${req.user.email}:>> Error editing teamname:>> ${error}`);
-      // console.log(error);
       new BadRequestResponse(error.message).send(res);
     } finally {
       session.endSession();
@@ -207,7 +201,6 @@ class DashboardController {
         team: userInTeam,
       }).send(res);
     } catch (error) {
-      // console.log(error);
       Logger.error(` ${req.user.email}:>> Error fetching profile:>> ${error}`);
       new InternalErrorResponse("Unable to send User profile").send(res);
     }

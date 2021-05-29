@@ -41,7 +41,6 @@ const transports: (
 ];
 
 const Logger: winston.Logger = winston.createLogger({
-  //   level,
   levels,
   format,
   transports,

@@ -19,11 +19,9 @@ passport.use(
   "userStrategy",
   new JwtStrategy(opts, async (jwtPayload: any, done: any) => {
     try {
-      // console.log(jwtPayload.id);
       const user: User = await UserModel.findById(jwtPayload.id);
       done(null, user);
     } catch (error) {
-      // console.log("JWT Middleware error:>>", error);
       Logger.error(`JWT middleware error:>> ${error}`);
       done(null, false);
     }
@@ -32,7 +30,6 @@ passport.use(
 
 const generateJwtToken = (payload: object): string => {
   const token: string = jwt.sign(payload, opts.secretOrKey);
-  // console.log("jwt made");
   return token;
 };
 

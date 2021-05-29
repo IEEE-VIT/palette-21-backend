@@ -4,9 +4,6 @@ import Logger from "../../configs/winston";
 
 dotenv.config();
 
-// url to generate code
-// https://www.figma.com/oauth?client_id=a2rQkR6iPgOvn3VHC6uCIh&redirect_uri=http://localhost:8000/&scope=file_read&state=abc&response_type=code
-
 interface IUser {
   name: string;
   email: string;
@@ -17,7 +14,6 @@ interface IUser {
 const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
   new Promise<IUser>((resolve, reject) => {
     let user: IUser;
-    // console.log(redirectUri);
     axios
       .post("https://www.figma.com/api/oauth/token", {
         client_id: process.env.figma_client_id,
@@ -29,7 +25,6 @@ const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
       .then((response) => {
         const { data } = response;
         return data.access_token;
-        // user_id access_token refresh_token expires_in
       })
       .then((token: string) => {
         axios
@@ -40,7 +35,6 @@ const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
           })
           .then((response) => {
             const { data } = response;
-            // id email handle img_url
             user = {
               name: data.handle,
               email: data.email,
@@ -50,16 +44,11 @@ const figmaAuth = (code: string, redirectUri: string): Promise<IUser> =>
             resolve(user);
           })
           .catch((error) => {
-            // console.error(
-            //   "error in figma auth(details):>>",
-            //   error.response.data
-            // );
             Logger.error(` Error in figma auth details:>> ${error}`);
             reject(error);
           });
       })
       .catch((error) => {
-        // console.log("error in figma auth:>>", error.response.data);
         Logger.error("Error from figma auth:>>", error);
         reject(error);
       });
