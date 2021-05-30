@@ -1,0 +1,16 @@
+DB_URI=
+client_id=
+client_secret=
+figma_client_id=
+figma_client_secret=
+redirect_uri=http://localhost:8000/
+FRONTEND_URL=http://localhost:3000/login/google/token
+JWT_SECRET=
+pb_stmt_deadline=2021-05-27 23:00
+team_reg_deadline=2021-05-27 22:30
+user_reg_deadline=2021-05-27 19:00
+round_1_deadline=2021-05-28 12:40
+round_2_deadline=2021-05-28 13:00
+round_3_deadline=2021-05-29 21:00
+round_2_result=2021-05-28 18:00
+RECAPTCHA_KEY=

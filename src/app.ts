@@ -12,7 +12,7 @@ import { SuccessResponse } from "./core/ApiResponse";
 
 dotenv.config();
 
-require("./controllers/auth/google.auth");
+require("./helpers/auth/google.auth");
 require("./middleware/auth");
 
 process.on("uncaughtException", (error) => {

@@ -9,7 +9,7 @@ import {
 } from "../core/ApiResponse";
 import User, { UserModel } from "../database/models/User";
 import generateJwtToken from "../middleware/auth";
-import figmaAuth from "./auth/figma.auth";
+import figmaAuth from "../helpers/auth/figma.auth";
 
 class AuthController {
   figmaAuthController = async (req: Request, res: Response): Promise<void> => {
