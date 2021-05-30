@@ -15,7 +15,7 @@ Each team has to submit their submission for the first round before the deadline
 
 - Standard response structure was followed for a smoother integration
 - Google and Figma Oauth were used for the authentication along with Passport JWT
-- MVC folder structure was implemented
+- MVC architecture was implemented
 - Robust error handling to send specific errors to the frontend for a better UX experience
 - MongoDB deployed on Atlas was used as our database
 - Staging branch was deployed on Heroku to test the features before they were deployed to production
@@ -48,14 +48,14 @@ For more guidelines on how to contribute, read our [contributing.md](https://git
 
 ### Development Run
 
-```bash
+```shell
 yarn install
 yarn spin-up
 ```
 
 ### Production Run
 
-```bash
+```shell
 yarn install
 yarn start
 ```
