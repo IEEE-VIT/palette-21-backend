@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-This document contains certain rules and guidelines that developers are expected to follow, while contributing to any repository.
+This document contains certain rules and guidelines that developers are expected to follow, while contributing to any repository by IEEE-VIT.
 
 ---
 
@@ -8,13 +8,21 @@ This document contains certain rules and guidelines that developers are expected
 
 - Use the `-m` flag only for minor changes. The message following the `-m` flag must be of the below format :
 
-  > `<Verb in present tense> <Action>`
+  > `<Verb>: <Action>`
+
+  Verbs oftenly used are
+
+  - add
+  - feat
+  - fix
+  - refactor
 
   :white_check_mark: **Examples of valid messages:**
 
-  - Added serialisers.py for users app
-  - Updated utils/validator.js file
-  - Changed functionality of authentication process
+  - add: serialisers.py for users app
+  - feat: validation
+  - fix: functionality of authentication process
+  - refactor: remove unwanted comments from src/auth.ts
 
   :x: **Examples of invalid messages:**
 
@@ -27,20 +35,19 @@ This document contains certain rules and guidelines that developers are expected
 
 ## 2. Issues
 
-- Issues **MUST** be opened any time any of the following events occur :
-  1. You encounter an issue such that a major (50 lines of code or above) portion of the code needs to be changed/added.
-  2. You want feature enhancements
-  3. You encounter bugs
-  4. Code refactoring is required
-  5. Test coverage should be increased
+- Issues **MUST** be opened any time any of the following events occur:
+  1. You want feature enhancements.
+  2. You encounter bugs.
+  3. Code refactoring is required.
+  4. Test coverage should be increased.
 - **Open issues with the given template only.**
 - Feel free to label the issues appropriately.
 - Do not remove the headings (questions in bold) while opening an issue with the given template. Simply append to it.
 
 ## 3. Branches and PRs
 
-- No commits must be made to the `master` branch directly. The `master` branch shall only consist of the working code.
-- Developers are expected to work on feature branches, and upon successful development and testing, a PR (pull request) must be opened to merge with master.
+- No commits must be made to the `main`/`master` branch directly. The `main`/`master` branch shall only consist of the working code.
+- Developers are expected to work on feature branches, and upon successful development and testing, a PR (pull request) must be opened to merge with `main`/`master`.
 - A branch must be named as either as the feature being implemented, or the issue being fixed.
 
   :white_check_mark: **Examples of valid brach names:**
@@ -57,7 +64,7 @@ This document contains certain rules and guidelines that developers are expected
 
 ## 4. Discussion Ethics
 
-- Developers should be clear and concise while commenting on issues or PR reviews. If needed, one should provide visual reference or a code snippet for everyone involved to properly grasp the issue.
+- Developers should be clear and concise while commenting on issues or PR reviews. If needed, one should provide visual reference or a code snippet for everyone involved to properly grasp the context.
 - Everyone should be respectful of everyone's opinion. Any harsh/disrespectful language is **STRICTLY** prohibited and will not be tolerated under any circumstances.
 
 ## 5. Coding Ethics
