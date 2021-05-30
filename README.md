@@ -40,9 +40,11 @@ To get started:
   `git checkout -b my-amazing-feature`
 - Make some amazing changes.
 - `git add .`
-- `git commit -m "A short description about the feature."`
+- `git commit -m "<verb> : <action>."`
 - `git push origin my-amazing-feature`
 - Open a pull request :)
+
+For more guidelines on how to contribute, read our [contributing.md](https://github.com/IEEE-VIT/palette-21-backend/blob/master/CONTRIBUTING.md)
 
 ### Development Run
 
@@ -55,7 +57,7 @@ yarn spin-up
 
 ```bash
 yarn install
-yarn run start
+yarn start
 ```
 
 To start contributing, check out [`CONTRIBUTING.md`](https://github.com/IEEE-VIT/palette-21-backend/blob/master/CONTRIBUTING.md) . New contributors are always welcome to support this project.
