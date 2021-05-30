@@ -2,7 +2,7 @@
   "name": "palette-backend",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:Ishan-001/palette-backend.git",
+  "repository": "git@github.com:IEEE-VIT/palette-backend.git",
   "author": "r-ush <aarush.bhatt@gmail.com>",
   "license": "MIT",
   "scripts": {
