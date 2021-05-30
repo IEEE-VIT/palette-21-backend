@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import moment from "moment-timezone";
 import Logger from "../configs/winston";
-import { DeadlineModel } from "./models/Deadline";
 
 dotenv.config();
 
@@ -46,47 +44,8 @@ const connect = (): void => {
   database = mongoose.connection;
 
   database.once("open", async () => {
-    Logger.info("Mongoose default connection open");
     try {
-      if (!(await DeadlineModel.exists({ event: "userReg" }))) {
-        DeadlineModel.create(
-          {
-            event: "userReg",
-            time: moment
-              .utc("2021-05-27 19:00:00")
-              .tz("Asia/Calcutta")
-              .format("YYYY-MM-DD HH:mm:ss"),
-          },
-          {
-            event: "teamReg",
-            time: moment
-              .utc("2021-05-27 22:30:00")
-              .tz("Asia/Calcutta")
-              .format("YYYY-MM-DD HH:mm:ss"),
-          },
-          {
-            event: "round1",
-            time: moment
-              .utc("2021-05-28 10:00:00")
-              .tz("Asia/Calcutta")
-              .format("YYYY-MM-DD HH:mm:ss"),
-          },
-          {
-            event: "round2",
-            time: moment
-              .utc("2021-05-28 20:00:00")
-              .tz("Asia/Calcutta")
-              .format("YYYY-MM-DD HH:mm:ss"),
-          },
-          {
-            event: "round3",
-            time: moment
-              .utc("2021-05-29 15:00:00")
-              .tz("Asia/Calcutta")
-              .format("YYYY-MM-DD HH:mm:ss"),
-          }
-        );
-      }
+      Logger.info("Mongoose default connection open");
     } catch (error) {
       Logger.error("Error connecting to DB from try catch:", error);
     }
