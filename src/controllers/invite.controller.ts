@@ -318,12 +318,13 @@ class InviteController {
       if (!updateTeammate) {
         throw new Error("Teammate not found!");
       }
-      const rejectReceivedInvites: UpdateWriteOpResult = await InviteModel.updateMany(
-        { sentTo: id },
-        {
-          status: constants.rejectedInvite,
-        }
-      ).session(session);
+      const rejectReceivedInvites: UpdateWriteOpResult =
+        await InviteModel.updateMany(
+          { sentTo: id },
+          {
+            status: constants.rejectedInvite,
+          }
+        ).session(session);
 
       if (!rejectReceivedInvites) {
         throw new Error("Could not reject your received invites!");
