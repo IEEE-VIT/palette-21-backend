@@ -67,7 +67,7 @@ client_secret=<Google Oauth Client secret>
 figma_client_id=<Figma Oauth Client Id>
 figma_client_secret=<Figma Oauth Client Secret>
 redirect_uri=<URL for OAuth Redirect>
-FRONTEND_URL=<Frontend URL of Palette'21>
+FRONTEND_URL=<Frontend URL of Palette 21>
 JWT_SECRET=<JWT secret key>
 pb_stmt_deadline=2021-05-27 23:00
 team_reg_deadline=2021-05-27 22:30
@@ -123,5 +123,9 @@ yarn start
     </tr>
 
 </table>
+
+## License
+
+This project is licensed under [MIT](https://github.com/IEEE-VIT/termiboard/blob/master/LICENSE).
 
 <p align="center">Made with ❤ by IEEE-VIT</p>
