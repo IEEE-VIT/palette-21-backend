@@ -77,6 +77,9 @@ round_2_deadline=2021-05-28 13:00
 round_3_deadline=2021-05-29 21:00
 round_2_result=2021-05-28 18:00
 RECAPTCHA_KEY=<Google Recaptcha Key>
+AWS_ID=<AWS Access key>
+AWS_SECRET=<User secret key>
+AWS_BUCKET_NAME=<AWS Buckey name>
 ```
 
 You can refer the following references to fill in some of the keys mentioned above:
@@ -84,7 +87,7 @@ You can refer the following references to fill in some of the keys mentioned abo
 - [Figma Oauth](https://www.figma.com/developers/api#oauth2)
 - [Google Oauth](https://developers.google.com/identity/protocols/oauth2/web-server)
 - [Google Recaptcha](https://developers.google.com/recaptcha/intro)
-- [Palette Frontend](https://github.com/IEEE-VIT/Palette-Frontend-21) 
+- [Palette Frontend](https://github.com/IEEE-VIT/Palette-Frontend-21)
 
 ### Development Run
 
