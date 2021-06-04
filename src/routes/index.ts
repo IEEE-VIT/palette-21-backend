@@ -4,6 +4,7 @@ import inviteRouter from "./invite";
 import dashboardouter from "./dashboard";
 import userRouter from "./user";
 import problemStatementRouter from "./problemStatement";
+import uploadRouter from "./upload";
 import submissionRouter from "./submission";
 import teamRegDeadline from "../middleware/deadline";
 
@@ -15,5 +16,6 @@ router.use("/dashboard", dashboardouter);
 router.use("/user", userRouter);
 router.use("/problem", problemStatementRouter);
 router.use("/submission", submissionRouter);
+router.use("/upload", uploadRouter);
 
 export default router;
