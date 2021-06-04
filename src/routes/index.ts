@@ -16,6 +16,6 @@ router.use("/dashboard", dashboardouter);
 router.use("/user", userRouter);
 router.use("/problem", problemStatementRouter);
 router.use("/submission", submissionRouter);
-router.use("/upload/", uploadRouter);
+router.use("/upload", uploadRouter);
 
 export default router;
