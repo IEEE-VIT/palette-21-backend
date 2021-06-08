@@ -129,6 +129,6 @@ yarn start
 
 ## License
 
-This project is licensed under [MIT](https://github.com/IEEE-VIT/termiboard/blob/master/LICENSE).
+This project is licensed under [MIT](https://github.com/IEEE-VIT/palette-21-backend/blob/master/LICENSE).
 
 <p align="center">Made with ❤ by IEEE-VIT</p>
