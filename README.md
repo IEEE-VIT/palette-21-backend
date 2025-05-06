@@ -112,7 +112,7 @@ yarn start
 <table>
 	<tr>
     	<td align="center">
-    		<a href="https://github.com/r-ush"><img src="https://avatars.githubusercontent.com/r-ush" width="100px;" alt="Rush"/><br /><sub><b>Aarush Bhat</b></sub></a>
+    		<a href="https://github.com/sloorush"><img src="https://avatars.githubusercontent.com/sloorush" width="100px;" alt="Rush"/><br /><sub><b>Aarush Bhat</b></sub></a>
     	</td>
 			<td align="center">
     		<a href="https://github.com/DarthBenro008"><img src="https://avatars.githubusercontent.com/DarthBenro008" width="100px;" alt=""/><br /><sub><b>Hemanth Krishna</b></sub></a>
